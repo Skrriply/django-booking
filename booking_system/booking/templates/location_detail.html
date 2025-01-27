@@ -1,16 +1,15 @@
-<!doctype html>
-<html lang="uk">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Докладніше про {{ location.name }}</title>
-    </head>
-    <body>
-        <h1>{{ location.name }}</h1>
-        <p>Кількість: {{ location.amount }}</p>
-        <p>Опис: {{ location.description }}</p>
-        <!-- TODO: Додати кнопку для бронювання -->
-        <br />
-        <a href="{% url 'index' %}">Назад</a>
-    </body>
-</html>
+{% extends 'base/_base.html' %}
+
+{% block title %}
+    Докладніше про {{ location.name }}
+{% endblock %}
+
+<!-- TODO: Покращити вигляд сторінки -->
+{% block content %}
+    <h1>{{ location.name }}</h1>
+    <p>Кількість: {{ location.amount }}</p>
+    <p>Опис: {{ location.description }}</p>
+    <!-- TODO: Додати кнопку для бронювання -->
+    <br />
+    <a href="{% url 'index' %}">Назад</a>
+{% endblock %}
