@@ -9,12 +9,15 @@
         <h1>Вітаємо!</h1>
         <h2>Доступні бронювання:</h2>
         <ul>
-            {% for location in locations %} +
+            {% for location in locations %}
             <li>
-                {{ location.name }} - Amount: {{ location.amount }} -
-                Description: {{ location.description }}
+                <a href="{% url 'location_detail' location.id %}">
+                    {{ location.name }}
+                </a>
+                - Кількість: {{ location.amount }} - Опис: {{ location.description }}
             </li>
             {% endfor %}
         </ul>
+        <!-- TODO: Додати кнопку для перегляду своїх бронювань -->
     </body>
 </html>
