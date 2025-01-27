@@ -1,3 +1,8 @@
 from django.shortcuts import render
 
-# Create your views here.
+from .models import Location
+
+
+def index(request):
+    locations = Location.objects.all()  # type: ignore
+    return render(request, 'index.html', {'locations': locations})
