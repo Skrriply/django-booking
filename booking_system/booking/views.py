@@ -11,3 +11,6 @@ def index(request):
 def location_detail(request, location_id):
     location = get_object_or_404(Location, pk=location_id)
     return render(request, 'location_detail.html', {'location': location})
+
+def info_page(request):
+    return render(request, "info_page.html")
