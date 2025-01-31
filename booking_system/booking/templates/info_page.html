@@ -4,7 +4,57 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Про Готель</title>
+        <style>
+            body {
+                overflow: hidden; 
+                
+            }
+    
+            html, body {
+                height: 100%;
+            }
+    
+            .container {
+                overflow: scroll; 
+                width: 100%;
+                height: 100%;
+                -ms-overflow-style: none;  
+                scrollbar-width: none;  
+            }
+    
+            .container::-webkit-scrollbar {
+                display: none; 
+            }
+            .image-container {
+            position: relative; 
+            width: 100%;
+            height: 500px;
+        }
+        .overlay-text {
+            position: absolute;
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%); 
+            color: white; 
+            font-size: 2rem; 
+            font-weight: bold; 
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); 
+        }
+        </style>    
     </head>
     <body>
+        <div class="container">
+            <div style="height: 0px; background-color: lightblue;">
+                Для перелистування сторінки без стрілок
+            </div>
+        
+                <div class="container mt-5">
+            <div class="image-container">
+                <img src="https://shangri-la-hotel-qaryat-al-beri-abu-dhabi.abudhabi-hotels-ae.com/data/Photos/OriginalPhoto/14401/1440159/1440159814/abu-dhabi-shangri-la-qaryat-al-beri-hotel-photo-41.JPEG" alt="Full Page Image" class="full-screen-image">
+                <div class="overlay-text">
+                    <h1>Готель Абу-Дабі</h1>
+                </div>
+            </div>
+        </div>
 
     </body>
