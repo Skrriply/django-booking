@@ -1,4 +1,4 @@
-ignore = ["F401"]
+lint.ignore = ["F401"]
 extend-exclude = ["settings.py", "manage.py", "migrations"]
 
 [format]
