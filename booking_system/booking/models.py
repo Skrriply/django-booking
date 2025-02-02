@@ -4,10 +4,10 @@ from django.db import models
 
 class Location(models.Model):
     name = models.CharField(max_length=50)
-    amount = models.IntegerField()
+    amount = models.PositiveIntegerField()
     description = models.TextField()
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'Place {self.name}, max amount: {self.amount}, description: {self.description}'
 
     class Meta:
@@ -25,7 +25,7 @@ class Booking(models.Model):
     end_time = models.DateTimeField()
     confirmed = models.BooleanField(default=False)  # type: ignore
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'{self.user} booked {self.location} from {self.start_time} till {self.end_time}'
 
     class Meta:
