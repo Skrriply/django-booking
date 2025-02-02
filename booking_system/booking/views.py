@@ -16,5 +16,5 @@ def location_detail(request: HttpRequest, location_id: int) -> HttpResponse:
     return render(request, 'location_detail.html', context={'location': location})
 
 
-def info_page(request: HttpRequest) -> HttpResponse:
-    return render(request, 'info_page.html')
+# def info_page(request: HttpRequest) -> HttpResponse:
+#     return render(request, 'info_page.html')
