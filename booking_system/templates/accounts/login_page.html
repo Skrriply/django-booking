@@ -1,0 +1,31 @@
+{% extends 'base/_base.html' %}
+
+
+{% block title %}
+Login
+{% endblock %}
+
+{% block content %}
+
+  <h1>login page</h1>
+<div class="row justify-content-center">
+    <div class="col-3" >
+        <form method="POST">
+            {% csrf_token %}
+              <div class="mb-3">
+                    <div class="mb-3">
+                        <label for="username_input" class="form-label">Your username</label>
+                        <input type="text" class="form-control" id="username_input" name="username">
+                        <div id="username_input" class="form-text">We`ll share your info to everyone)))</div>
+                    </div>
+
+                    <label for="password_input" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password_input" name="username">
+              </div>
+
+            <button type="submit" class="btn btn-primary" >Login</button>
+         </form>
+    </div>
+</div>
+
+{% endblock %}
