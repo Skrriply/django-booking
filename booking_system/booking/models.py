@@ -14,6 +14,7 @@ class Location(models.Model):
     photo = models.URLField()
     price_per_night = models.DecimalField(max_digits=10, decimal_places=2)
 
+
     
     
     def __str__(self) -> str:
@@ -56,7 +57,7 @@ class Review(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Review by {self.user.username} for {self.property.name}"
+        return f"Review by {self.user.username} for {self.location.name}"
 
     class Meta:
         verbose_name = 'Відгук'
