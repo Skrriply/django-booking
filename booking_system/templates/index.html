@@ -11,9 +11,10 @@
         <ul>
             {% for location in locations %}
             <li>
-                <a href="{% url 'location_detail' location.id %}">
+                <a href="{% url 'booking:location_detail' location.id %}">
                     {{ location.name }}
                 </a>
+
                 - Кількість: {{ location.amount }} - Опис: {{ location.description }}
             </li>
             {% endfor %}

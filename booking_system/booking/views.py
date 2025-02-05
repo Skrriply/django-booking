@@ -11,9 +11,10 @@ def index(request: HttpRequest) -> HttpResponse:
     return render(request, 'index.html', context={'locations': locations})
 
 
-def location_detail(request: HttpRequest, location_id: int) -> HttpResponse:
-    location = get_object_or_404(Location, pk=location_id)
+def location_detail(request: HttpRequest, pk: int) -> HttpResponse:
+    location = get_object_or_404(Location, pk=pk)
     return render(request, 'location_detail.html', context={'location': location})
+
 
 
 # def info_page(request: HttpRequest) -> HttpResponse:
