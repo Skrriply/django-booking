@@ -1,5 +1,8 @@
 from django import forms
 from .models import Location
+from django.contrib.auth.decorators import login_required
+
+@login_required
 class LocationForm(forms.ModelForm):
     name = forms.CharField(max_length=30, min_length=3, required=True)
     country = forms.CharField(max_length=20, required=True)
@@ -16,4 +19,5 @@ class LocationForm(forms.ModelForm):
     class Meta:
         model = Location
         fields = '__all__'
+        exclude = ['user']
 

@@ -19,10 +19,12 @@ def create_location(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
         form = LocationForm(request.POST)
         if form.is_valid():
-            form.save()  # Save the new Location instance
-            return redirect('booking:index')  # Redirect to location list after success
+            location = form.save(commit=False) 
+            location.user = request.user  
+            location.save()  
+            return redirect('booking:index')  
     else:
-        form = LocationForm()
+        form = LocationForm(request.GET)
 
     return render(request, 'location_form.html', {'form': form})
 
