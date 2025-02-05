@@ -1,6 +1,6 @@
 from django import forms
-
-class LocationForm(forms.Form):
+from models import Location
+class LocationForm(forms.ModelForm):
     name = forms.CharField(max_length=30, min_length=3, required=True)
     country = forms.CharField(max_length=20, required=True)
     city = forms.CharField(max_length=20, required=True)
@@ -13,4 +13,6 @@ class LocationForm(forms.Form):
     photo = forms.URLField(required=True)
     price_per_night = forms.DecimalField(max_digits=10, 
                                          decimal_places=2)
+    class Meta:
+        model = Location
 
