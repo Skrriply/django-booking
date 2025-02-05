@@ -8,6 +8,6 @@ app_name = 'booking'
 urlpatterns = [
     path('', views.index, name='index'),
     path('location/<int:pk>/', views.location_detail, name='location_detail'),
-    path('location/create/', views.create_location, name = "create_location")
+    path('location/create/', views.create_location, name="create_location"),
     #path('information/', views.info_page, name='hotel_info'),
 ]

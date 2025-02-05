@@ -1,5 +1,5 @@
 from django import forms
-from models import Location
+from .models import Location
 class LocationForm(forms.ModelForm):
     name = forms.CharField(max_length=30, min_length=3, required=True)
     country = forms.CharField(max_length=20, required=True)
@@ -15,4 +15,5 @@ class LocationForm(forms.ModelForm):
                                          decimal_places=2)
     class Meta:
         model = Location
+        fields = '__all__'
 

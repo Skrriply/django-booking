@@ -1,5 +1,4 @@
-from typing import Any
-from forms import LocationForm
+from .forms import LocationForm
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, render, redirect
 
@@ -20,8 +19,8 @@ def create_location(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
         form = LocationForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('success_url')
+            form.save()  # Save the new Location instance
+            return redirect('booking:index')  # Redirect to location list after success
     else:
         form = LocationForm()
 
