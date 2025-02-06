@@ -9,5 +9,6 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('location/<int:pk>/', views.location_detail, name='location_detail'),
     path('location/create/', views.create_location, name="create_location"),
+    path('location/<int:pk>/book', views.create_booking, name='create_booking'),
     #path('information/', views.info_page, name='hotel_info'),
 ]

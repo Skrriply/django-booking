@@ -13,9 +13,18 @@ class Location(models.Model):
     description = models.TextField()
     photo = models.URLField()
     price_per_night = models.DecimalField(max_digits=10, decimal_places=2)
-    user = models.ForeignKey(User, related_name='locations', on_delete=models.CASCADE, null=True, blank=True) #В тз написано щоб була можливість змінити інфу про
-                                                                                        #локацію або взагалі її видалити. Типу юзер який не 
-                                                                                        # викладав на сайт ніяку локацію може видалити чужу.
+
+
+    
+    
+    def __str__(self) -> str:
+        return f'Place {self.name}, max amount: {self.amount}, description: {self.description}'
+
+    class Meta:
+        verbose_name = 'Location'
+        verbose_name_plural = 'Locations'
+        ordering = ['amount']
+
 
     
     

@@ -1,0 +1,16 @@
+{% block content %}
+  <h2>Create Booking for {{ location.name }}</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Submit Booking</button>
+  </form>
+
+  {% if form.errors %}
+    <ul>
+      {% for field, errors in form.errors.items %}
+        <li>{{ field }}: {{ errors }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endblock %}

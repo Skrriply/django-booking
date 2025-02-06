@@ -1,8 +1,9 @@
 from django import forms
-from .models import Location
-from django.contrib.auth.decorators import login_required
+from .models import Location, Booking
+from django.utils.timezone import now
 
-@login_required
+
+
 class LocationForm(forms.ModelForm):
     name = forms.CharField(max_length=30, min_length=3, required=True)
     country = forms.CharField(max_length=20, required=True)
@@ -19,5 +20,18 @@ class LocationForm(forms.ModelForm):
     class Meta:
         model = Location
         fields = '__all__'
-        exclude = ['user']
 
+class BookingForm(forms.ModelForm):
+    start_time = forms.DateTimeField(
+        required=True,
+        initial=now,
+        widget=forms.DateTimeInput(attrs={'type': 'datetime-local'})
+    )
+    end_time = forms.DateTimeField(
+        required=True,
+        widget=forms.DateTimeInput(attrs={'type': 'datetime-local'})
+    )
+
+    class Meta:
+        model = Booking
+        exclude = ['user', 'location', 'confirmed']
