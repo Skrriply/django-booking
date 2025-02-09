@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls.resolvers import Local
 from django.utils.timezone import now
 
-from .forms import BookingForm, LocationForm
+from .forms import BookingForm
 from .models import Location
 
 
