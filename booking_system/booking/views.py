@@ -5,11 +5,16 @@ from django.urls.resolvers import Local
 from django.utils.timezone import now
 
 from .forms import BookingForm, LocationForm
-from .models import Location
+from .models import Location, Booking
 
+from django.utils.timezone import now
+from django.db.models import Q
+
+from django.utils.timezone import now
+from django.db.models import Q
 
 def index(request: HttpRequest) -> HttpResponse:
-    locations = Location.objects.all()  # type: ignore
+    locations = Location.objects.all()
     sort_by = request.GET.get('sort_by', 'name')
 
     ordering_options = {
@@ -21,8 +26,15 @@ def index(request: HttpRequest) -> HttpResponse:
     if sort_by in ordering_options:
         locations = locations.order_by(ordering_options[sort_by])
 
+    # Знаходження локацій з активними бронюваннями
+    booked_location_ids = Booking.objects.filter(
+        Q(start_time__lte=now(), end_time__gte=now())
+    ).values_list('location_id', flat=True)
+
     return render(
-        request, 'index.html', context={'locations': locations, 'sort_by': sort_by}
+        request, 
+        'index.html', 
+        context={'locations': locations, 'sort_by': sort_by, 'booked_location_ids': booked_location_ids}
     )
 
 
@@ -65,3 +77,5 @@ def create_booking(request: HttpRequest, pk: int) -> HttpResponse:
         form = BookingForm(initial={'start_time': now()})
 
     return render(request, 'booking_form.html', {'form': form, 'location': location})
+
+
