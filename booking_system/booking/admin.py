@@ -1,11 +1,18 @@
 from django.contrib import admin
 
-from .models import Booking, Location
+from .models import Booking, Location, Review
 
 
 @admin.register(Location)
 class LocationAdmin(admin.ModelAdmin):
-    list_display = ['name', 'amount', 'description']
+    list_display = [
+        'name',
+        'amount',
+        'description',
+        'city',
+        'country',
+        'price_per_night',
+    ]
     search_fields = ['name']
     ordering = ['amount']
 
@@ -16,3 +23,11 @@ class BookingAdmin(admin.ModelAdmin):
     list_filter = ['confirmed', 'location']
     search_fields = ['user__username', 'location__name']
     ordering = ['start_time']
+
+
+@admin.register(Review)
+class ReviewAdmin(admin.ModelAdmin):
+    list_display = ['user', 'location', 'rating', 'created_at']
+    list_filter = ['rating']
+    search_fields = ['user__username', 'location__name']
+    ordering = ['-created_at']
