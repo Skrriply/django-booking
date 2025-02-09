@@ -11,7 +11,7 @@ from django.http import (
 )
 from django.shortcuts import get_object_or_404, redirect, render
 
-from .forms import LoginForm
+from .forms import LoginForm, RegisterForm
 
 
 def login_view(request: HttpRequest) -> Union[HttpResponse, Union[HttpResponseRedirect, HttpResponsePermanentRedirect]]:
@@ -32,3 +32,28 @@ def login_view(request: HttpRequest) -> Union[HttpResponse, Union[HttpResponseRe
 
     form = LoginForm()
     return render(request, 'accounts/login_page.html', {'form': form})
+
+def register_view(request: HttpRequest) -> HttpResponse:
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('booking:index')
+        messages.warning(request, 'Sorry, but something went wrong...')
+
+    form = RegisterForm()
+    return render(request, 'accounts/register_page.html', {'form': form})
+
+
+@login_required
+def logout_view(request: HttpRequest) -> HttpResponse:
+        logout(request)
+        messages.success(request, 'You successfully loged out.')
+        return redirect('booking:index')
+
+@login_required
+def profile_view(request: HttpRequest) -> HttpResponse:
+    user = request.user
+    bookings = user.bookings.all()  # Получаем все бронирования пользователя
+    return render(request, 'accounts/profile.html', {'user': user, 'bookings': bookings})
