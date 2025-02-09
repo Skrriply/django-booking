@@ -6,10 +6,11 @@
 
 <!-- TODO: Покращити вигляд сторінки -->
 {% block content %}
+    <img src="{{ location.photo }}" alt="{{ location.name }}">
     <h1>{{ location.name }}</h1>
     <p>Кількість: {{ location.amount }}</p>
     <p>Опис: {{ location.description }}</p>
     <!-- TODO: Додати кнопку для бронювання -->
     <br />
-    <a href="{% url 'index' %}">Назад</a>
+    <a href="{% url 'booking:index'%}" class="btn btn-primary">Назад</a>
 {% endblock %}
