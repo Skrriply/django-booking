@@ -1,0 +1,26 @@
+{% extends "base/_base.html" %}
+
+
+{% block content %}
+<div class="container">
+    <h2>Профіль користувача</h2>
+    <p><strong>Ім'я користувача:</strong> {{ user.username }}</p>
+    <p><strong>Ім'я:</strong> {{ user.first_name }}</p>
+    <p><strong>Прізвище:</strong> {{ user.last_name }}</p>
+    <p><strong>Email:</strong> {{ user.email }}</p>
+
+    <h3>Ваші бронювання</h3>
+    {% if bookings %}
+        <ul>
+            {% for booking in bookings %}
+                <li>
+                    {{ booking.location.name }}: {{ booking.start_time|date:"d.m.Y" }} - {{ booking.end_time|date:"d.m.Y" }}
+                    {% if not booking.confirmed %}(Очікує підтвердження){% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>У вас поки що немає бронювань.</p>
+    {% endif %}
+</div>
+{% endblock %}

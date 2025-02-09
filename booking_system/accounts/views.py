@@ -52,3 +52,8 @@ def logout_view(request: HttpRequest) -> HttpResponse:
         messages.success(request, 'You successfully loged out.')
         return redirect('booking:index')
 
+@login_required
+def profile_view(request: HttpRequest) -> HttpResponse:
+    user = request.user
+    bookings = user.bookings.all()  # Получаем все бронирования пользователя
+    return render(request, 'accounts/profile.html', {'user': user, 'bookings': bookings})

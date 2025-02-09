@@ -46,6 +46,12 @@
                                    aria-expanded="false">
                                   {{ request.user }}
                                 </a>
+                                
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'accounts:profile' %}">
+                                        Мій профіль
+                                    </a>
+                                </li>                                
 
                                 <ul class="dropdown-menu">
                                   <li>
