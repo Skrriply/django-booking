@@ -1,26 +1,43 @@
 {% extends "base/_base.html" %}
 
-
 {% block content %}
-<div class="container">
-    <h2>Профіль користувача</h2>
-    <p><strong>Ім'я користувача:</strong> {{ user.username }}</p>
-    <p><strong>Ім'я:</strong> {{ user.first_name }}</p>
-    <p><strong>Прізвище:</strong> {{ user.last_name }}</p>
-    <p><strong>Email:</strong> {{ user.email }}</p>
+<div class="container my-5">
+    <div class="text-center mb-4">
+    <h2 class="mb-4">Профіль користувача</h2></div>
+    <div class="text-center mb-4">
+        <img src="https://img.freepik.com/premium-photo/man-without-face-impersonal-man-mannequin-anonymous-portrait-man-abstract-identity-illustration_91497-8366.jpg" 
+             alt="User Profile Image" class="img-thumbnail rounded-circle" style="width: 170px;">
 
-    <h3>Ваші бронювання</h3>
+    <div class="card mb-4 p-3">
+        <h4 class="card-title">Особиста інформація</h4>
+        <div class="card-body">
+            <h2><p><strong>Ім'я користувача:</strong> {{ user.username }}</p></h2>
+            <h2><p><strong>Ім'я:</strong> {{ user.first_name }}</p></h2>
+            <h2><p><strong>Прізвище:</strong> {{ user.last_name }}</p></h2>
+            <h2><p><strong>Email:</strong> {{ user.email }}</p></h2>
+        </div>
+    </div>
+
+    <h3 class="mb-3">Ваші бронювання</h3>
+
     {% if bookings %}
-        <ul>
+        <ul class="list-group">
             {% for booking in bookings %}
-                <li>
-                    {{ booking.location.name }}: {{ booking.start_time|date:"d.m.Y" }} - {{ booking.end_time|date:"d.m.Y" }}
-                    {% if not booking.confirmed %}(Очікує підтвердження){% endif %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>{{ booking.location.name }}</strong>: 
+                        {{ booking.start_time|date:"d.m.Y" }} - {{ booking.end_time|date:"d.m.Y" }}
+                    </div>
+                    {% if not booking.confirmed %}
+                        <span class="badge bg-warning text-dark">Очікує підтвердження</span>
+                    {% endif %}
                 </li>
             {% endfor %}
         </ul>
     {% else %}
-        <p>У вас поки що немає бронювань.</p>
+        <div class="alert alert-info mt-3">
+            <h2>У вас поки що немає бронювань.</h2>
+        </div>
     {% endif %}
-</div>
+</div></div>
 {% endblock %}
