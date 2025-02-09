@@ -45,3 +45,10 @@ def register_view(request: HttpRequest) -> HttpResponse:
     form = RegisterForm()
     return render(request, 'accounts/register_page.html', {'form': form})
 
+
+@login_required
+def logout_view(request: HttpRequest) -> HttpResponse:
+        logout(request)
+        messages.success(request, 'You successfully loged out.')
+        return redirect('booking:index')
+
