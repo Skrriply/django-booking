@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls.resolvers import Local
 from django.utils.timezone import now
 
-from .forms import BookingForm, LocationForm
+from .forms import BookingForm
 from .models import Location
 
 
@@ -29,18 +29,6 @@ def index(request: HttpRequest) -> HttpResponse:
 def location_detail(request: HttpRequest, pk: int) -> HttpResponse:
     location = get_object_or_404(Location, pk=pk)
     return render(request, 'location_detail.html', context={'location': location})
-
-
-def create_location(request: HttpRequest) -> HttpResponse:
-    if request.method == 'POST':
-        form = LocationForm(request.POST)
-        if form.is_valid():
-            form.save()  # Save the new Location instance
-            return redirect('booking:index')  # Redirect to location list after success
-    else:
-        form = LocationForm()
-
-    return render(request, 'location_form.html', {'form': form})
 
 
 def find_location(id: int) -> Location:
