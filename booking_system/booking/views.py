@@ -31,18 +31,6 @@ def location_detail(request: HttpRequest, pk: int) -> HttpResponse:
     return render(request, 'location_detail.html', context={'location': location})
 
 
-def create_location(request: HttpRequest) -> HttpResponse:
-    if request.method == 'POST':
-        form = LocationForm(request.POST)
-        if form.is_valid():
-            form.save()  # Save the new Location instance
-            return redirect('booking:index')  # Redirect to location list after success
-    else:
-        form = LocationForm()
-
-    return render(request, 'location_form.html', {'form': form})
-
-
 def find_location(id: int) -> Location:
     location = Location.objects.filter(id=id).first()  # type: ignore
     return location
