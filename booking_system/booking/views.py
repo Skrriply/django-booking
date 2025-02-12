@@ -12,8 +12,8 @@ from .models import Location, Booking
 
 
 def send_activation_email(booking):
-    subject = "Подтверждение публикации"
-    message = f"Для подтверждения публикации перейдите по ссылке: http://127.0.0.1:8000/activate/{booking.activation_code}/"
+    subject = "Підтвердження бронювання"
+    message = f"Для підтвердження перейдіть за посиланням: http://127.0.0.1:8000/activate/{booking.activation_code}/"
     recipient_list = [booking.user.email]
 
     send_mail(subject, message, settings.EMAIL_HOST_USER, recipient_list)
@@ -69,4 +69,4 @@ def activate_post(request, code):
     booking = get_object_or_404(Booking, activation_code=code)
     booking.confirmed = True
     booking.save()
-    return HttpResponse("Пост успешно активирован!")
+    return HttpResponse("Бронювання успішно підтверджено!")
