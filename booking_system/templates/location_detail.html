@@ -1,37 +1,41 @@
-{% extends 'base/_base.html' %}
-
-{% block title %}
-Докладніше про {{ location.name }}
-{% endblock %}
-
-{% block content %}
+{% extends 'base/_base.html' %} {% block title %} Докладніше про {{
+location.name }} {% endblock %} {% block content %}
 <div class="container">
-    <div class="row">
-        <div class="col-md-8">
-            <img src="{{ location.photo }}" alt="{{ location.name }}" class="img-fluid mb-3"
-                style="max-height: 500px; object-fit: cover" />
-            <h1>{{ location.name }}</h1>
-            <p class="lead">{{ location.description }}</p>
+  <div class="row">
+    <div class="col-md-8">
+      <img
+        src="{{ location.photo }}"
+        alt="{{ location.name }}"
+        class="img-fluid mb-3"
+        style="max-height: 500px; object-fit: cover"
+      />
+      <h1>{{ location.name }}</h1>
+      <p class="lead">{{ location.description }}</p>
 
-            <p>Місцезнаходження: {{ location.city }}, {{ location.country }}</p>
-            <p>Рейтинг: {{ location.rating }}</p>
-            <p>Ціна за ніч: ${{ location.price_per_night }}</p>
-            <p>Доступно місць: {{ location.amount }}</p>
-        </div>
-
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Забронювати зараз</h5>
-                    <form method="post" action="{% url 'booking:create_booking' location.pk %}">
-                        {% csrf_token %} {{ form.as_p }}
-                        <button type="submit" class="btn btn-success">Забронювати</button>
-                    </form>
-                </div>
-            </div>
-        </div>
+      <p>Місцезнаходження: {{ location.city }}, {{ location.country }}</p>
+      <p>Рейтинг: {{ location.rating }}</p>
+      <p>Ціна за ніч: ${{ location.price_per_night }}</p>
+      <p>Доступно місць: {{ location.amount }}</p>
     </div>
 
-    <a href="{% url 'booking:index' %}" class="btn btn-secondary mt-3">Назад до списку</a>
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Забронювати зараз</h5>
+          <form
+            method="post"
+            action="{% url 'booking:create_booking' location.pk %}"
+          >
+            {% csrf_token %} {{ form.as_p }}
+            <button type="submit" class="btn btn-success">Забронювати</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <a href="{% url 'booking:index' %}" class="btn btn-secondary mt-3"
+    >Назад до списку</a
+  >
 </div>
 {% endblock %}
