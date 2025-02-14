@@ -1,14 +1,15 @@
 {% extends 'base/_base.html' %}
 
 {% block title %}
-    Докладніше про {{ location.name }}
+Докладніше про {{ location.name }}
 {% endblock %}
 
 {% block content %}
 <div class="container">
     <div class="row">
         <div class="col-md-8">
-            <img src="{{ location.photo }}" alt="{{ location.name }}" class="img-fluid mb-3" style="max-height: 500px; object-fit: cover" />
+            <img src="{{ location.photo }}" alt="{{ location.name }}" class="img-fluid mb-3"
+                style="max-height: 500px; object-fit: cover" />
             <h1>{{ location.name }}</h1>
             <p class="lead">{{ location.description }}</p>
 

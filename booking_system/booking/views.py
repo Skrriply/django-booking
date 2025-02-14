@@ -10,16 +10,16 @@ from .forms import BookingForm
 from .models import Location, Booking
 
 
-
-def send_activation_email(booking):
-    subject = "Підтвердження бронювання"
-    message = f"Для підтвердження перейдіть за посиланням: http://127.0.0.1:8000/activate/{booking.activation_code}/"
+def send_activation_email(booking: Booking) -> None:
+    subject = 'Підтвердження бронювання'
+    message = f'Для підтвердження перейдіть за посиланням: http://127.0.0.1:8000/activate/{booking.activation_code}/'
     recipient_list = [booking.user.email]
 
     send_mail(subject, message, settings.EMAIL_HOST_USER, recipient_list)
 
+
 def index(request: HttpRequest) -> HttpResponse:
-    locations = Location.objects.all()  # type: ignore
+    locations = Location.objects.all()
     sort_by = request.GET.get('sort_by', 'name')
 
     ordering_options = {
@@ -59,14 +59,17 @@ def create_booking(request: HttpRequest, pk: int) -> HttpResponse:
             booking.confirmed = False
             send_activation_email(booking)
             booking.save()
-            return redirect('booking:index')  # Adjust this route to match your URLs
+
+            return redirect('booking:index')
     else:
         form = BookingForm(initial={'start_time': now()})
 
     return render(request, 'booking_form.html', {'form': form, 'location': location})
 
-def activate_post(request, code):
+
+def activate_post(request: HttpRequest, code: int) -> HttpResponse:
     booking = get_object_or_404(Booking, activation_code=code)
     booking.confirmed = True
     booking.save()
-    return HttpResponse("Бронювання успішно підтверджено!")
+
+    return HttpResponse('Бронювання успішно підтверджено!')

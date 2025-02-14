@@ -22,14 +22,10 @@ class BookingForm(forms.ModelForm):
 
         if start_time and end_time:
             if start_time >= end_time:
-                raise ValidationError(
-                    "Дата закінчення має бути пізніше дати початку."
-                )
+                raise ValidationError('Дата закінчення має бути пізніше дати початку.')
 
             if start_time < now():
-                raise ValidationError(
-                    "Дата початку не може бути в минулому."
-                )
+                raise ValidationError('Дата початку не може бути в минулому.')
 
         return cleaned_data
 
