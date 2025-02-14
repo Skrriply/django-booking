@@ -1,4 +1,6 @@
-{% extends "base/_base.html" %} {% block content %}
+{% extends "base/_base.html" %}
+
+{% block content %}
 <div class="container my-5">
   <div class="text-center mb-4">
     <h2 class="mb-4">Профіль користувача</h2>
@@ -24,7 +26,7 @@
           <p><strong>Прізвище:</strong> {{ user.last_name }}</p>
         </h2>
         <h2>
-          <p><strong>Email:</strong> {{ user.email }}</p>
+          <p><strong>Ел. пошта:</strong> {{ user.email }}</p>
         </h2>
       </div>
     </div>

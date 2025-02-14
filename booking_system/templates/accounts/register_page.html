@@ -3,7 +3,7 @@
 
 
 {% block title %}
-Register
+Реєстрація
 {% endblock %}
 
 {% block content %}
@@ -14,10 +14,10 @@ Register
         <form method="POST">
             {% csrf_token %}
             <div class="mb-1">
-                <h1>Register page</h1>
+                <h1>Реєстрація</h1>
                 {{ form|crispy }}
 
-                <button type="submit" class="btn btn-primary">Login</button>
+                <button type="submit" class="btn btn-primary">Зареєструвати</button>
         </form>
     </div>
 </div>
