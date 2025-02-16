@@ -6,7 +6,10 @@
 {% endblock %}
 
 {% block content %}
+
 <div class="container">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+
     <h1>Знайдіть та забронюйте потрібну вам локацію</h1>
 
     <!-- Пошук -->
@@ -72,4 +75,36 @@
         {% endfor %}
     </div>
 </div>
+
+    <!-- Кнопка -->
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary rounded-circle p-3" id="hoverButton" style="width: 60px; height: 60px;" data-bs-dismiss="modal">
+            <i class="fa-solid fa-phone-volume"></i></button>
+    </div>
+
+    <!-- Модальне вікно -->
+    <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Наші контакти</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрити"></button>
+                </div>
+                <div class="modal-body">
+                    <p>📧 Написати email <code>nemo.bma@gmail.com</code></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрити</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Скрипт для відкриття модального вікна при наведенні -->
+    <script>
+        document.getElementById("hoverButton").addEventListener("mouseenter", function() {
+            var myModal = new bootstrap.Modal(document.getElementById('myModal'));
+            myModal.show();
+        });
+    </script>
 {% endblock %}
