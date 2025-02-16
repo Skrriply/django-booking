@@ -51,12 +51,7 @@
       <div class="card">
         <div class="card-body">
           <h5 class="card-title">Забронювати зараз</h5>
-          <form
-            method="post"
-            action="{% url 'booking:create_booking' location.pk %}"
-          >
-            {% csrf_token %} {{ form.as_p }}
-            <button type="submit" class="btn btn-success">Забронювати</button>
+          <a href="{% url 'booking:create_booking' location.pk %}" class="btn btn-primary">Забронювати</a>
           </form>
         </div>
       </div>

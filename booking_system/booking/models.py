@@ -12,7 +12,7 @@ class Location(models.Model):
     region = models.CharField(max_length=50)
     street = models.CharField(max_length=50)
     rating = models.PositiveSmallIntegerField(
-        validators=[MinValueValidator(1), MaxValueValidator(5)], default=0
+        validators=[MinValueValidator(0), MaxValueValidator(5)], default=0
     )
     amount = models.PositiveIntegerField()
     description = models.TextField()
