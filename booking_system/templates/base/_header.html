@@ -1,65 +1,104 @@
 <header class="p-3 bg-dark text-white">
-    <div class="container">
-        <div class="d-flex flex-wrap align-items-center justify-content-between">
-            <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
-                <svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap">
-                    <use xlink:href="#bootstrap"></use>
-                </svg>
-                <span class="fs-4">Django Booking</span>
-            </a>
-            <nav class="navbar navbar-expand-lg navbar-dark">
-                <div class="container-fluid">
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+  <div class="container">
+    <div class="d-flex flex-wrap align-items-center justify-content-between">
+      <a
+        href="/"
+        class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none"
+      >
+        <svg
+          class="bi me-2"
+          width="40"
+          height="32"
+          role="img"
+          aria-label="Bootstrap"
+        >
+          <use xlink:href="#bootstrap"></use>
+        </svg>
+        <span class="fs-4">Django Booking</span>
+      </a>
+      <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              {% if request.user.is_authenticated %}
+              <li class="nav-item dropdown">
+                <a
+                  class="nav-link dropdown-toggle"
+                  href="#"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  {{ request.user }}
+                </a>
+                <ul class="dropdown-menu">
+                  <li>
+                    <a
+                      class="dropdown-item"
+                      href="{% url 'accounts:profile' %}"
+                    >
+                      Мій профіль
+                    </a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item" href="{% url 'accounts:logout' %}">
+                      Вихід
+                    </a>
+                  </li>
+                </ul>
+              </li>
+              {% else %}
+              <li class="nav-item dropdown">
+                <a
+                  class="nav-link dropdown-toggle"
+                  href="#"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  Акаунти
+                </a>
+                <ul class="dropdown-menu">
+                  <li>
+                    <a
+                      class="dropdown-item"
+                      href="{% url 'accounts:register' %}"
+                    >
+                      Реєстрація
+                    </a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item" href="{% url 'accounts:login' %}">
+                      Логін
+                    </a>
+                  </li>
+                </ul>
+              </li>
+              {% endif %}
 
-                            {% if request.user.is_authenticated %}
-                              <li class="nav-item dropdown">
-                                  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                      {{ request.user }}
-                                  </a>
-                                  <ul class="dropdown-menu">
-                                      <li>
-                                          <a class="dropdown-item" href="{% url 'accounts:profile' %}">
-                                              Мій профіль
-                                          </a>
-                                      </li>
-                                      <li>
-                                          <a class="dropdown-item" href="{% url 'accounts:logout' %}">
-                                              Вихід
-                                          </a>
-                                      </li>
-                                  </ul>
-                              </li>
-                            {% else %}
-                              <li class="nav-item dropdown">
-                                  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                      Акаунти
-                                  </a>
-                                  <ul class="dropdown-menu">
-                                      <li>
-                                          <a class="dropdown-item" href="{% url 'accounts:register' %}">
-                                              Реєстрація
-                                          </a>
-                                      </li>
-                                      <li>
-                                          <a class="dropdown-item" href="{% url 'accounts:login' %}">
-                                              Логін
-                                          </a>
-                                      </li>
-                                  </ul>
-                              </li>
-                            {% endif %}
-
-                            <li class="nav-item">
-                                <a class="nav-link active" aria-current="page" href="{% url 'booking:index' %}">Головна</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </nav>
+              <li class="nav-item">
+                <a
+                  class="nav-link active"
+                  aria-current="page"
+                  href="{% url 'booking:index' %}"
+                  >Головна</a
+                >
+              </li>
+            </ul>
+          </div>
         </div>
+      </nav>
     </div>
+  </div>
 </header>

@@ -33,7 +33,7 @@ class Booking(models.Model):
     start_time = models.DateTimeField(auto_now_add=True)
     end_time = models.DateTimeField()
     confirmed = models.BooleanField(default=False)  # type: ignore
-    activation_code  = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    activation_code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
     def total_days(self) -> int:
         return (self.end_time - self.start_time).days  # type: ignore
