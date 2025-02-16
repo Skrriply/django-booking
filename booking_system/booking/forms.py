@@ -2,7 +2,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.timezone import now
 
-from .models import Booking
+from .models import Booking, Review
 
 
 class BookingForm(forms.ModelForm):
@@ -32,3 +32,9 @@ class BookingForm(forms.ModelForm):
     class Meta:
         model = Booking
         exclude = ['user', 'location', 'confirmed']
+
+
+class ReviewForm(forms.ModelForm):
+    class Meta:
+        model = Review
+        fields = ['rating', 'comment']

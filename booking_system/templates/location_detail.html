@@ -1,5 +1,10 @@
-{% extends 'base/_base.html' %} {% block title %} Докладніше про {{
-location.name }} {% endblock %} {% block content %}
+{% extends 'base/_base.html' %}
+
+{% block title %}
+Докладніше про {{ location.name }}
+{% endblock %}
+
+{% block content %}
 <div class="container">
   <div class="row">
     <div class="col-md-8">
@@ -16,6 +21,30 @@ location.name }} {% endblock %} {% block content %}
       <p>Рейтинг: {{ location.rating }}</p>
       <p>Ціна за ніч: ${{ location.price_per_night }}</p>
       <p>Доступно місць: {{ location.amount }}</p>
+
+      <h3>Відгуки</h3>
+      {% for review in reviews %}
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title">{{ review.user.username }}</h5>
+          <p class="card-text">{{ review.comment }}</p>
+          <p class="card-text"><small class="text-muted">Рейтинг: {{ review.rating }}</small></p>
+        </div>
+      </div>
+      {% empty %}
+      <p>Немає відгуків.</p>
+      {% endfor %}
+
+      {% if user_review %}
+      <p>Ви вже залишили відгук для цього місця.</p>
+      {% else %}
+      <h3>Залишити відгук</h3>
+      <form method="post">
+        {% csrf_token %}
+        {{ review_form.as_p }}
+        <button type="submit" class="btn btn-primary">Відправити</button>
+      </form>
+      {% endif %}
     </div>
 
     <div class="col-md-4">
