@@ -1,15 +1,11 @@
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls.resolvers import Local
 from django.utils.timezone import now
 from django.core.mail import send_mail
-from .forms import BookingForm
-from .models import Location, Booking
+from .forms import BookingForm, ReviewForm
+from .models import Location, Booking, Review
 from django.conf import settings
-from django.utils.timezone import now
-from django.db.models import Q
-
 from django.utils.timezone import now
 from django.db.models import Q
 
@@ -50,9 +46,37 @@ def index(request: HttpRequest) -> HttpResponse:
     )
 
 
-def location_detail(request: HttpRequest, pk: int) -> HttpResponse:
+def location_detail(request, pk):
     location = get_object_or_404(Location, pk=pk)
-    return render(request, 'location_detail.html', context={'location': location})
+    reviews = location.reviews.all()
+    user_review = None
+
+    if request.user.is_authenticated:
+        user_review = Review.objects.filter(
+            user=request.user, location=location
+        ).first()
+
+    if request.method == 'POST' and not user_review:
+        review_form = ReviewForm(request.POST)
+        if review_form.is_valid():
+            review = review_form.save(commit=False)
+            review.user = request.user
+            review.location = location
+            review.save()
+            return redirect('booking:location_detail', pk=pk)
+    else:
+        review_form = ReviewForm()
+
+    return render(
+        request,
+        'location_detail.html',
+        context={
+            'location': location,
+            'reviews': reviews,
+            'review_form': review_form,
+            'user_review': user_review,
+        },
+    )
 
 
 # def create_location(request: HttpRequest) -> HttpResponse:
