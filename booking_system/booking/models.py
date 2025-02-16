@@ -1,3 +1,5 @@
+import uuid
+
 from django.contrib.auth.models import User
 from django.db import models
 
@@ -31,6 +33,7 @@ class Booking(models.Model):
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
     confirmed = models.BooleanField(default=False)  # type: ignore
+    activation_code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
     def total_days(self) -> int:
         return (self.end_time - self.start_time).days  # type: ignore

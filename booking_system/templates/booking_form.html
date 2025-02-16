@@ -1,16 +1,30 @@
-{% block content %}
-  <h2>Create Booking for {{ location.name }}</h2>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Submit Booking</button>
-  </form>
+{% extends 'base/_base.html' %} {% load crispy_forms_tags %} {% block title %}
+Бронювання - {{ location.name }} {% endblock %} {% block content %}
+<div class="container">
+  <h1>Бронювання: {{ location.name }}</h1>
 
-  {% if form.errors %}
-    <ul>
-      {% for field, errors in form.errors.items %}
-        <li>{{ field }}: {{ errors }}</li>
-      {% endfor %}
-    </ul>
-  {% endif %}
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-body">
+          <form method="post">
+            {% csrf_token %} {{ form|crispy }}
+            <button type="submit" class="btn btn-primary">Забронювати</button>
+          </form>
+        </div>
+      </div>
+
+      {% if form.errors %}
+      <div class="alert alert-danger mt-3">
+        Виникла помилка:
+        <ul>
+          {% for field, errors in form.errors.items %} {% for error in errors %}
+          <li><strong>{{ field|title }}:</strong> {{ error }}</li>
+          {% endfor %} {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
 {% endblock %}
