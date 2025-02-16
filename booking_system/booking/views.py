@@ -77,5 +77,4 @@ def activate_post(request: HttpRequest, code: int) -> HttpResponse:
     booking = get_object_or_404(Booking, activation_code=code)
     booking.confirmed = True
     booking.save()
-
     return HttpResponse('Бронювання успішно підтверджено!')
