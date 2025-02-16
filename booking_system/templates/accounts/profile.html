@@ -40,9 +40,8 @@
         class="list-group-item d-flex justify-content-between align-items-center"
       >
         <div>
-          <strong>{{ booking.location.name }}</strong>: {{
-          booking.start_time|date:"d.m.Y" }} - {{ booking.end_time|date:"d.m.Y"
-          }}
+          <strong>{{ booking.location.name }}:</strong>
+          {{ booking.start_time|date:"d.m.Y" }} - {{ booking.end_time|date:"d.m.Y" }}
         </div>
         {% if not booking.confirmed %}
         <span class="badge bg-warning text-dark">Очікує підтвердження</span>
