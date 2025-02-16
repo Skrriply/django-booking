@@ -24,6 +24,10 @@ def send_activation_email(booking: Booking) -> None:
 def index(request: HttpRequest) -> HttpResponse:
     locations = Location.objects.all()
     sort_by = request.GET.get('sort_by', 'name')
+    query = request.GET.get('q', '')
+
+    if query:
+        locations = locations.filter(name__icontains=query)
 
     ordering_options = {
         'name': 'name',
@@ -42,7 +46,7 @@ def index(request: HttpRequest) -> HttpResponse:
     return render(
         request, 
         'index.html', 
-        context={'locations': locations, 'sort_by': sort_by, 'booked_location_ids': booked_location_ids}
+        context={'locations': locations, 'sort_by': sort_by, 'booked_location_ids': booked_location_ids, 'query': query}
     )
 
 

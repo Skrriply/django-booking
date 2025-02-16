@@ -9,6 +9,14 @@
 <div class="container">
     <h1>Знайдіть та забронюйте потрібну вам локацію</h1>
 
+    <!-- Пошук -->
+    <div class="mb-3">
+        <form method="get" class="d-flex">
+            <input class="form-control me-2" type="search" placeholder="Пошук" aria-label="Пошук" name="q" value="{{ query }}">
+            <button class="btn btn-outline-success" type="submit">Пошук</button>
+        </form>
+    </div>
+
     <!-- Сортування -->
     <div class="mb-3">
         <label for="sort_by" class="form-label">Сортувати за:</label>
@@ -18,8 +26,8 @@
                 <option value="price" {% if sort_by == 'price' %}selected{% endif %}>Ціною</option>
                 <option value="rating" {% if sort_by == 'rating' %}selected{% endif %}>Рейтингом</option>
             </select>
-            {% if request.GET.q %}
-                <input type="hidden" name="q" value="{{ request.GET.q }}">
+            {% if query %}
+            <input type="hidden" name="q" value="{{ query }}">
             {% endif %}
         </form>
     </div>
@@ -27,30 +35,41 @@
     <!-- Локації -->
     <div class="row row-cols-1 row-cols-md-3 g-4">
         {% for location in locations %}
-<div class="col">
-    <div class="card h-100">
-        <img src="{{ location.photo }}" class="card-img-top" alt="{{ location.name }}" style="height: 200px; object-fit: cover;">
-        <div class="card-body">
-            <h5 class="card-title">
-                <a href="{% url 'booking:location_detail' location.id %}" class="text-decoration-none">{{ location.name }}</a>
-            </h5>
-            <p class="card-text">{{ location.city }}, {{ location.country }}</p>
-            <p class="card-text">{{ location.price_per_night }} грн / ніч</p>
-            {% if location.id in booked_location_ids %}
-                <span class="badge bg-danger">Заброньовано</span>
-            {% else %}
-                <span class="badge bg-success">Доступно</span>
-            {% endif %}
-            <a href="{% url 'booking:location_detail' location.id %}" class="btn btn-outline-primary">Переглянути</a>
-            <a href="{% url 'booking:create_booking' location.pk %}" class="btn btn-primary">Забронювати</a>
+        <div class="col">
+            <div class="card h-100">
+                <img
+                    src="{{ location.photo }}"
+                    class="card-img-top"
+                    alt="{{ location.name }}"
+                    style="height: 200px; object-fit: cover;"
+                />
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <a href="{% url 'booking:location_detail' location.id %}" class="text-decoration-none">
+                            {{ location.name }}
+                        </a>
+                    </h5>
+                    <p class="card-text">{{ location.city }}, {{ location.country }}</p>
+                    <p class="card-text">{{ location.price_per_night }} грн / ніч</p>
+
+                    <!-- Availability Badge -->
+                    {% if location.is_booked %}
+                        <span class="badge bg-danger">Заброньовано</span>
+                    {% else %}
+                        <span class="badge bg-success">Доступно</span>
+                    {% endif %}
+
+                    <!-- Buttons -->
+                    <div class="mt-2">
+                        <a href="{% url 'booking:location_detail' location.id %}" class="btn btn-outline-primary">Переглянути</a>
+                        <a href="{% url 'booking:create_booking' location.pk %}" class="btn btn-primary">Забронювати</a>
+                    </div>
+                </div>
+            </div>
         </div>
+        {% empty %}
+        <p>Нічого не знайдено.</p>
+        {% endfor %}
     </div>
 </div>
-{% empty %}
-<p>Нічого не знайдено.</p>
-{% endfor %}
-
-    </div>
-</div>
-
 {% endblock %}
