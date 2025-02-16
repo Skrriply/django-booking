@@ -11,10 +11,26 @@ from django.db.models import Q
 
 def send_activation_email(booking: Booking) -> None:
     subject = 'Підтвердження бронювання'
-    message = f'Для підтвердження перейдіть за посиланням: http://127.0.0.1:8000/activate/{booking.activation_code}/'
+    activation_link = f'http://127.0.0.1:8000/activate/{booking.activation_code}/'
+    message = f"""
+    <html>
+        <body style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;">
+            <div style="max-width: 500px; background-color: #ffffff; padding: 20px; border-radius: 10px; box-shadow: 0px 0px 10px #ddd;">
+                <h2 style="color: #333;">Підтвердження бронювання</h2>
+                <p>Дякуємо за ваше бронювання! Для його підтвердження, будь ласка, натисніть кнопку нижче:</p>
+                <p style="text-align: center;">
+                    <a href="{activation_link}" style="display: inline-block; padding: 10px 20px; background-color: #28a745; color: #ffffff; text-decoration: none; font-size: 16px; border-radius: 5px;">Підтвердити бронювання</a>
+                </p>
+                <p>Або скористайтеся цим посиланням: <br> <a href="{activation_link}">{activation_link}</a></p>
+                <hr style="border: none; border-top: 1px solid #ddd;">
+                <p style="font-size: 12px; color: #777;">Якщо ви не здійснювали це бронювання, просто проігноруйте цей лист.</p>
+            </div>
+        </body>
+    </html>
+    """
     recipient_list = [booking.user.email]
 
-    send_mail(subject, message, settings.EMAIL_HOST_USER, recipient_list)
+    send_mail(subject, "", settings.EMAIL_HOST_USER, recipient_list, html_message=message)
 
 
 def index(request: HttpRequest) -> HttpResponse:
