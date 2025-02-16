@@ -11,7 +11,9 @@ class Location(models.Model):
     city = models.CharField(max_length=50)
     region = models.CharField(max_length=50)
     street = models.CharField(max_length=50)
-    rating = models.DecimalField(max_digits=5, decimal_places=2)
+    rating = models.PositiveSmallIntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(5)], default=0
+    )
     amount = models.PositiveIntegerField()
     description = models.TextField()
     photo = models.URLField()
@@ -19,6 +21,12 @@ class Location(models.Model):
 
     def __str__(self) -> str:
         return f'Place {self.name}, max amount: {self.amount}, description: {self.description}'
+
+    def update_rating(self):
+        reviews = self.reviews.all()
+        total_rating = sum(review.rating for review in reviews)
+        self.rating = total_rating / reviews.count() if reviews.exists() else 0.0
+        self.save()
 
     class Meta:
         verbose_name = 'Location'
@@ -36,14 +44,14 @@ class Booking(models.Model):
     confirmed = models.BooleanField(default=False)  # type: ignore
     activation_code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
+    def __str__(self) -> str:
+        return f'{self.user} booked {self.location} from {self.start_time} till {self.end_time}'
+
     def total_days(self) -> int:
         return (self.end_time - self.start_time).days  # type: ignore
 
     def total_price(self) -> float:
         return self.total_days * self.location.price_per_night  # type: ignore
-
-    def __str__(self) -> str:
-        return f'{self.user} booked {self.location} from {self.start_time} till {self.end_time}'
 
     class Meta:
         verbose_name = 'Booking'
@@ -63,7 +71,11 @@ class Review(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self) -> str:
-        return f'Review by {self.user.name} for {self.location.name}'
+        return f'Review by {self.user.first_name} {self.user.last_name} for {self.location.name}'
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.location.update_rating()
 
     class Meta:
         verbose_name = 'Review'
