@@ -39,7 +39,7 @@ class Booking(models.Model):
     location = models.ForeignKey(
         Location, related_name='bookings', on_delete=models.CASCADE
     )
-    start_time = models.DateTimeField(auto_now_add=True)
+    start_time = models.DateTimeField()
     end_time = models.DateTimeField()
     confirmed = models.BooleanField(default=False)  # type: ignore
     activation_code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
