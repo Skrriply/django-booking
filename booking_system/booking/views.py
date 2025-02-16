@@ -9,9 +9,11 @@ from django.conf import settings
 from django.db.models import Q
 
 
-def send_activation_email(booking: Booking) -> None:
+def send_activation_email(request, booking: Booking) -> None:
     subject = 'Підтвердження бронювання'
-    activation_link = f'http://127.0.0.1:8000/activate/{booking.activation_code}/'
+    base_url = f"{request.scheme}://{request.get_host()}"
+    activation_link = f'{base_url}/activate/{booking.activation_code}/'
+    
     message = f"""
     <html>
         <body style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;">
@@ -21,7 +23,6 @@ def send_activation_email(booking: Booking) -> None:
                 <p style="text-align: center;">
                     <a href="{activation_link}" style="display: inline-block; padding: 10px 20px; background-color: #28a745; color: #ffffff; text-decoration: none; font-size: 16px; border-radius: 5px;">Підтвердити бронювання</a>
                 </p>
-                <p>Або скористайтеся цим посиланням: <br> <a href="{activation_link}">{activation_link}</a></p>
                 <hr style="border: none; border-top: 1px solid #ddd;">
                 <p style="font-size: 12px; color: #777;">Якщо ви не здійснювали це бронювання, просто проігноруйте цей лист.</p>
             </div>
@@ -116,7 +117,7 @@ def create_booking(request: HttpRequest, pk: int) -> HttpResponse:
             booking.user = request.user  # type: ignore
             booking.location = location
             booking.confirmed = False
-            send_activation_email(booking)
+            send_activation_email(request, booking)
 
             booking.save()
             return redirect('booking:index')
