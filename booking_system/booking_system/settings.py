@@ -142,8 +142,8 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-JET_DEFAULT_THEME = 'light-gray'  # Установите начальную тему
-
+# Jet configuration
+JET_DEFAULT_THEME = 'light-gray'
 JET_THEMES = [
     {
         'theme': 'default',
