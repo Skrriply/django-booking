@@ -3,15 +3,23 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls.resolvers import Local
 from django.utils.timezone import now
-
+from django.core.mail import send_mail
 from .forms import BookingForm
 from .models import Location, Booking
-
+from django.conf import settings
 from django.utils.timezone import now
 from django.db.models import Q
 
 from django.utils.timezone import now
 from django.db.models import Q
+
+def send_activation_email(booking: Booking) -> None:
+    subject = 'Підтвердження бронювання'
+    message = f'Для підтвердження перейдіть за посиланням: http://127.0.0.1:8000/activate/{booking.activation_code}/'
+    recipient_list = [booking.user.email]
+
+    send_mail(subject, message, settings.EMAIL_HOST_USER, recipient_list)
+
 
 def index(request: HttpRequest) -> HttpResponse:
     locations = Location.objects.all()
@@ -71,9 +79,17 @@ def create_booking(request: HttpRequest, pk: int) -> HttpResponse:
             booking.user = request.user  # type: ignore
             booking.location = location
             booking.confirmed = False
+            send_activation_email(booking)
+
             booking.save()
             return redirect('booking:index')  # Adjust this route to match your URLs
     else:
         form = BookingForm(initial={'start_time': now()})
 
     return render(request, 'booking_form.html', {'form': form, 'location': location})
+def activate_post(request: HttpRequest, code: int) -> HttpResponse:
+    booking = get_object_or_404(Booking, activation_code=code)
+    booking.confirmed = True
+    booking.save()
+
+    return HttpResponse('Бронювання успішно підтверджено!')
