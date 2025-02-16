@@ -52,14 +52,14 @@
                     <p class="card-text">{{ location.city }}, {{ location.country }}</p>
                     <p class="card-text">{{ location.price_per_night }} грн / ніч</p>
 
-                    <!-- Availability Badge -->
+                    <!-- Бейдж -->
                     {% if location.is_booked %}
                         <span class="badge bg-danger">Заброньовано</span>
                     {% else %}
                         <span class="badge bg-success">Доступно</span>
                     {% endif %}
 
-                    <!-- Buttons -->
+                    <!-- Кнопки -->
                     <div class="mt-2">
                         <a href="{% url 'booking:location_detail' location.id %}" class="btn btn-outline-primary">Переглянути</a>
                         <a href="{% url 'booking:create_booking' location.pk %}" class="btn btn-primary">Забронювати</a>
