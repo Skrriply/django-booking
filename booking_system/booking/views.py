@@ -32,6 +32,8 @@ def send_activation_email(request, booking: Booking) -> None:
     recipient_list = [booking.user.email]
 
     send_mail(subject, "", settings.EMAIL_HOST_USER, recipient_list, html_message=message)
+#def find_mistake_in_booking(obj) -> bool:
+
 
 
 def index(request: HttpRequest) -> HttpResponse:
@@ -118,6 +120,15 @@ def create_booking(request: HttpRequest, pk: int) -> HttpResponse:
             booking.location = location
             booking.confirmed = False
             send_activation_email(request, booking)
+
+            overlapping_bookings = Booking.objects.filter(
+                location=location,
+                confirmed=True
+            ).filter(
+                Q(start_time__lt=booking.end_time, end_time__gt=booking.start_time)
+            )
+            if overlapping_bookings.exists():
+                return render(request, 'booking_form.html', {'form': form, 'location': location})
 
             booking.save()
             return redirect('booking:index')
