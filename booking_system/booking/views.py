@@ -135,6 +135,7 @@ def create_booking(request: HttpRequest, pk: int) -> HttpResponse:
                 Q(start_time__lt=booking.end_time, end_time__gt=booking.start_time)
             )
             if overlapping_bookings.exists():
+                form.add_error(None, 'Цей час уже зайнятий. Будь ласка, оберіть інший період.')
                 return render(request, 'booking_form.html', {'form': form, 'location': location})
 
             send_activation_email(request, booking)
