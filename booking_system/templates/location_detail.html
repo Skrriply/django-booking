@@ -37,13 +37,15 @@
 
       {% if user_review %}
       <p>Ви вже залишили відгук для цього місця.</p>
-      {% else %}
+      {% elif request.user.is_authenticated %}
       <h3>Залишити відгук</h3>
       <form method="post">
         {% csrf_token %}
         {{ review_form.as_p }}
         <button type="submit" class="btn btn-primary">Відправити</button>
       </form>
+      {% else %}
+      <h3>Ви маєте буди авторизованим!</h3>
       {% endif %}
     </div>
 
