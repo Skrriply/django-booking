@@ -1,8 +1,9 @@
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.utils.timezone import now
+from django.utils.timezone import now, make_aware
 from django.core.mail import send_mail
+from datetime import datetime
 from .forms import BookingForm, ReviewForm
 from .models import Location, Booking, Review, Like
 from django.conf import settings
@@ -47,9 +48,23 @@ def index(request: HttpRequest) -> HttpResponse:
     locations = Location.objects.all()
     sort_by = request.GET.get('sort_by', 'name')
     query = request.GET.get('q', '')
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
 
     if query:
         locations = locations.filter(name__icontains=query)
+    if start_date and end_date:
+        start_dt = make_aware(datetime.strptime(start_date, "%Y-%m-%d"))
+        end_dt = make_aware(datetime.strptime(end_date, "%Y-%m-%d"))
+
+        # Вибираємо тільки ті локації, які НЕ мають підтверджених бронювань у цей період
+        booked_location_ids = Booking.objects.filter(
+            confirmed=True
+        ).filter(
+            Q(start_time__lt=end_dt, end_time__gt=start_dt)
+        ).values_list('location_id', flat=True)
+
+        locations = locations.exclude(id__in=booked_location_ids)
 
     ordering_options = {
         'name': 'name',
@@ -73,6 +88,8 @@ def index(request: HttpRequest) -> HttpResponse:
             'sort_by': sort_by,
             'booked_location_ids': booked_location_ids,
             'query': query,
+            'start_date': start_date,
+            'end_date': end_date
         },
     )
 
