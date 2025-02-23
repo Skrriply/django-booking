@@ -144,4 +144,4 @@ def activate_post(request: HttpRequest, code: int) -> HttpResponse:
     booking.confirmed = True
     booking.save()
 
-    return HttpResponse('Бронювання успішно підтверджено!')
+    return render(request, 'activation_page.html', {'booking': booking.id})

@@ -1,0 +1,14 @@
+{% extends 'base/_base.html' %}
+{% load static %}
+
+{% block title %}
+Система бронювання
+{% endblock %}
+
+{% block content %}
+    <div style="text-align: center;">
+        <h2 style="font-weight: bold;">Ваше бронювання успішно підтверджено!</h2>
+        <h6 style="font-weight: bold;">Мені трохи самотньо, можливо залишишся? </h6>
+        <img src="{% static 'images/cute.png' %}" alt="Логотип" style="width: 35px; height: 35px;">
+    </div>
+{% endblock %}
