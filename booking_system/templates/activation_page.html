@@ -6,9 +6,51 @@
 {% endblock %}
 
 {% block content %}
-    <div style="text-align: center;">
+    <div style="text-align: center;" id="booking-confirmation">
         <h2 style="font-weight: bold;">Ваше бронювання успішно підтверджено!</h2>
         <h6 style="font-weight: bold;">Мені трохи самотньо, можливо залишишся? </h6>
         <img src="{% static 'images/cute.png' %}" alt="Логотип" style="width: 35px; height: 35px;">
+        <br>
+        <br>
+        <button class="btn btn-primary" id="send-button" onclick="showLoader()">Залишитися</button>
     </div>
+
+    <div align="center" style="display: none;" id="loading">
+        <h1>Будь ласка, зачекайте,</br>йде відправка даних в СБУ</h1>
+        <div class="loader"></br></div>
+        <div class="message" style="display: none;">Успішно відправлено!</div>
+    </div>
+
+    <style>
+        .loader {
+            border: 16px solid #f3f3f3; /* Light grey */
+            border-top: 16px solid #3498db; /* Blue */
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
+            animation: spin 2s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+
+    <script>
+        function showLoader() {
+            document.getElementById('booking-confirmation').style.display = 'none';
+
+            document.getElementById('loading').style.display = 'block';
+
+            setTimeout(function() {
+                document.querySelector('.loader').style.display = 'none';
+                document.querySelector('.message').style.display = 'block';
+
+                setTimeout(function() {
+                    window.location.href = '/accounts/profile/';
+                }, 2000);
+            }, 12000);
+        }
+    </script>
 {% endblock %}
