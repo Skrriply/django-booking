@@ -3,6 +3,7 @@ import uuid
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
+from django.utils.timezone import now
 
 
 class Location(models.Model):
@@ -27,6 +28,11 @@ class Location(models.Model):
         total_rating = sum(review.rating for review in reviews)
         self.rating = total_rating / reviews.count() if reviews.exists() else 0.0
         self.save()
+    
+    def is_booked(self) -> bool:
+        return self.bookings.filter(
+            start_time__lte=now(), end_time__gte=now(), confirmed=True
+        ).exists()
 
     class Meta:
         verbose_name = 'Location'
