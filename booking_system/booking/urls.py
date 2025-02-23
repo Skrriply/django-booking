@@ -10,4 +10,6 @@ urlpatterns = [
     path('location/<int:pk>/', views.location_detail, name='location_detail'),
     path('location/<int:pk>/book', views.create_booking, name='create_booking'),
     path('activate/<uuid:code>/', views.activate_post, name='activation'),
+    path("like/<int:location_id>/", views.like_location, name="like_location")
+    
 ]

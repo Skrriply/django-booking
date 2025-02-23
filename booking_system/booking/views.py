@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.timezone import now
 from django.core.mail import send_mail
 from .forms import BookingForm, ReviewForm
-from .models import Location, Booking, Review
+from .models import Location, Booking, Review, Like
 from django.conf import settings
 from django.db.models import Q
 
@@ -137,6 +137,21 @@ def create_booking(request: HttpRequest, pk: int) -> HttpResponse:
         form = BookingForm(initial={'start_time': now()})
 
     return render(request, 'booking_form.html', {'form': form, 'location': location})
+
+def like_location(request, location_id):
+    location = get_object_or_404(Location, id=location_id)
+    
+    like, created = Like.objects.get_or_create(user=request.user, location=location)
+    
+    if created:
+        location.like_count += 1  
+    else:
+        like.delete()
+        location.like_count -= 1  
+    
+    location.save()
+    
+    return redirect("booking:location_detail", pk=location_id)
 
 
 def activate_post(request: HttpRequest, code: int) -> HttpResponse:
