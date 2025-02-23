@@ -1,65 +1,64 @@
-{% extends 'base/_base.html' %}
-
-{% block title %}
-Докладніше про {{ location.name }}
-{% endblock %}
-
-{% block content %}
-<div class="container">
-  <div class="row">
-    <div class="col-md-8">
-      <img
-        src="{{ location.photo }}"
-        alt="{{ location.name }}"
-        class="img-fluid mb-3"
-        style="max-height: 500px; object-fit: cover"
-      />
-      <h1>{{ location.name }}</h1>
-      <p class="lead">{{ location.description }}</p>
-
-      <p>Місцезнаходження: {{ location.city }}, {{ location.country }}</p>
-      <p>Рейтинг: {{ location.rating }}</p>
-      <p>Ціна за ніч: {{ location.price_per_night }} грн</p>
-      <p>Доступно місць: {{ location.amount }}</p>
-
-      <h3>Відгуки</h3>
-      {% for review in reviews %}
-      <div class="card mb-3">
-        <div class="card-body">
-          <h5 class="card-title">{{ review.user.username }}</h5>
-          <p class="card-text">{{ review.comment }}</p>
-          <p class="card-text"><small class="text-muted">Рейтинг: {{ review.rating }}</small></p>
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Деталі Локації</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Arial', sans-serif;
+        }
+        .card {
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease-in-out;
+        }
+        .card:hover {
+            transform: scale(1.02);
+        }
+        .card-header {
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+            background: linear-gradient(135deg, #007bff, #6610f2);
+        }
+        .btn-success {
+            font-size: 1.2rem;
+            padding: 12px;
+            border-radius: 10px;
+            transition: background 0.3s ease-in-out;
+        }
+        .btn-success:hover {
+            background: #28a745;
+        }
+        .list-group-item {
+            background: rgba(0, 123, 255, 0.1);
+            border-left: 5px solid #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-header text-white text-center">
+                <h2>Деталі Локації</h2>
+            </div>
+            <div class="card-body">
+                <p><strong>Місцезнаходження:</strong> Київ, Україна</p>
+                <p><strong>Рейтинг:</strong> ⭐⭐⭐⭐☆ (4.5)</p>
+                <p><strong>Ціна за ніч:</strong> 1200 грн</p>
+                <p><strong>Доступно місць:</strong> 3</p>
+                <h5>Відгуки:</h5>
+                <ul class="list-group mb-3">
+                    <li class="list-group-item">"Чудове місце для відпочинку!" – Олександр</li>
+                    <li class="list-group-item">"Комфортні умови та гарний сервіс." – Марія</li>
+                    <li class="list-group-item">"Дуже задоволений перебуванням!" – Андрій</li>
+                </ul>
+                <button class="btn btn-success w-100">Забронювати</button>
+            </div>
         </div>
-      </div>
-      {% empty %}
-      <p>Немає відгуків.</p>
-      {% endfor %}
-
-      {% if user_review %}
-      <p>Ви вже залишили відгук для цього місця.</p>
-      {% else %}
-      <h3>Залишити відгук</h3>
-      <form method="post">
-        {% csrf_token %}
-        {{ review_form.as_p }}
-        <button type="submit" class="btn btn-primary">Відправити</button>
-      </form>
-      {% endif %}
     </div>
-
-    <div class="col-md-4">
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">Забронювати зараз</h5>
-          <a href="{% url 'booking:create_booking' location.pk %}" class="btn btn-primary">Забронювати</a>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <a href="{% url 'booking:index' %}" class="btn btn-secondary mt-3"
-    >Назад до списку</a
-  >
-</div>
-{% endblock %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

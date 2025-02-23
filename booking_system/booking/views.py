@@ -119,7 +119,7 @@ def create_booking(request: HttpRequest, pk: int) -> HttpResponse:
             booking.user = request.user  # type: ignore
             booking.location = location
             booking.confirmed = False
-            send_activation_email(request, booking)
+
 
             overlapping_bookings = Booking.objects.filter(
                 location=location,
@@ -130,6 +130,7 @@ def create_booking(request: HttpRequest, pk: int) -> HttpResponse:
             if overlapping_bookings.exists():
                 return render(request, 'booking_form.html', {'form': form, 'location': location})
 
+            send_activation_email(request, booking)
             booking.save()
             return redirect('booking:index')
     else:
@@ -143,4 +144,4 @@ def activate_post(request: HttpRequest, code: int) -> HttpResponse:
     booking.confirmed = True
     booking.save()
 
-    return HttpResponse('Бронювання успішно підтверджено!')
+    return render(request, 'activation_page.html', {'booking': booking.id})
