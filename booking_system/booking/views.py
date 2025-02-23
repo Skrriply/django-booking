@@ -16,17 +16,24 @@ def send_activation_email(request, booking: Booking) -> None:
     
     message = f"""
     <html>
-        <body style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;">
-            <div style="max-width: 500px; background-color: #ffffff; padding: 20px; border-radius: 10px; box-shadow: 0px 0px 10px #ddd;">
-                <h2 style="color: #333;">Підтвердження бронювання</h2>
-                <p>Дякуємо за ваше бронювання! Для його підтвердження, будь ласка, натисніть кнопку нижче:</p>
-                <p style="text-align: center;">
-                    <a href="{activation_link}" style="display: inline-block; padding: 10px 20px; background-color: #28a745; color: #ffffff; text-decoration: none; font-size: 16px; border-radius: 5px;">Підтвердити бронювання</a>
-                </p>
-                <hr style="border: none; border-top: 1px solid #ddd;">
-                <p style="font-size: 12px; color: #777;">Якщо ви не здійснювали це бронювання, просто проігноруйте цей лист.</p>
-            </div>
-        </body>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Підтвердження бронювання</title>
+    </head>
+    <body style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px; text-align: center;">
+        <div style="max-width: 500px; margin: auto; background-color: #ffffff; padding: 25px; border-radius: 10px; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);">
+            <h2 style="color: #333; margin-bottom: 20px;">Підтвердження бронювання</h2>
+            <p style="color: #555; line-height: 1.5;">Дякуємо за ваше бронювання в <strong>{booking.location.name}</strong>!</p>
+            <p style="color: #555; line-height: 1.5;">Для його підтвердження, будь ласка, натисніть кнопку нижче:</p>
+            <p style="margin: 20px 0;">
+                <a href="{activation_link}" style="display: inline-block; padding: 12px 24px; background-color: #28a745; color: #ffffff; text-decoration: none; font-size: 16px; font-weight: bold; border-radius: 5px;">Підтвердити бронювання</a>
+            </p>
+            <p style="color: #555; line-height: 1.5;">Ваше бронювання з <strong>{booking.start_time.strftime('%d.%m.%Y')}</strong> по <strong>{booking.end_time.strftime('%d.%m.%Y')}</strong>.</p>
+            <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
+            <p style="font-size: 12px; color: #777; line-height: 1.5;">Якщо ви не здійснювали це бронювання, просто проігноруйте цей лист.</p>
+        </div>
+    </body>
     </html>
     """
     recipient_list = [booking.user.email]
