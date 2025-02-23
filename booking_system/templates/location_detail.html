@@ -24,7 +24,19 @@
         {% csrf_token %}
         <button type="submit" class="btn btn-outline-primary">👍 Лайк {{ likes_count }}</button>
       </form>
-    
+      {% if user_review %}
+      <p>Ви вже залишили відгук для цього місця.</p>
+      {% elif request.user.is_authenticated %}
+      <h3>Залишити відгук</h3>
+      <form method="post">
+        {% csrf_token %}
+        {{ review_form.as_p }}
+        <button type="submit" class="btn btn-primary">Відправити</button>
+      </form>
+      {% else %}
+      <h3>Ви маєте буди авторизованим!</h3>
+      {% endif %}
+    </div>
       <h3>Відгуки</h3>
       {% for review in reviews %}
         <div class="card mb-3">

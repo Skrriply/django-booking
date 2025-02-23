@@ -32,9 +32,16 @@ cd django-booking
 python -m pip install -r requirements.txt
 ```
 
-### 4. Запуск застосунку
+### 4. Редагування змінних середовища
+
+Перейменуйте файл `.env.example` у кореневій директорії на `.env` та вставте свої дані.
+
+
+### 5. Запуск застосунку
 
 ```bash
+python booking_system\manage.py makemigrations
+python booking_system\manage.py migrate
 python booking_system\manage.py runserver
 ```
 
