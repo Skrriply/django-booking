@@ -15,6 +15,7 @@ class Location(models.Model):
     rating = models.PositiveSmallIntegerField(
         validators=[MinValueValidator(0), MaxValueValidator(5)], default=0
     )
+    like_count = models.PositiveIntegerField(default=0)
     amount = models.PositiveIntegerField()
     description = models.TextField()
     photo = models.URLField()
@@ -87,4 +88,11 @@ class Review(models.Model):
         verbose_name = 'Review'
         verbose_name_plural = 'Reviews'
         ordering = ['-created_at']
+        unique_together = ('user', 'location')
+
+class Like(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name="likes")
+
+    class Meta:
         unique_together = ('user', 'location')

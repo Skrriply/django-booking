@@ -34,6 +34,15 @@
             {% endif %}
         </form>
     </div>
+    <!-- Перегляд за часом -->
+    <div class="mb-3">
+        <form method="get" class="d-flex">
+            <input type="date" class="form-control me-2" name="start_date" value="{{ request.GET.start_date }}">
+            <input type="date" class="form-control me-2" name="end_date" value="{{ request.GET.end_date }}">
+            <button class="btn btn-outline-success" type="submit">Пошук</button>
+        </form>
+    </div>
+    
 
     <!-- Локації -->
     <div class="row row-cols-1 row-cols-md-3 g-4">
@@ -66,6 +75,7 @@
                     <div class="mt-2">
                         <a href="{% url 'booking:location_detail' location.id %}" class="btn btn-outline-primary">Переглянути</a>
                         <a href="{% url 'booking:create_booking' location.pk %}" class="btn btn-primary">Забронювати</a>
+                        {{ location.like_count }} <i class="fa-regular fa-thumbs-up"></i>
                     </div>
                 </div>
             </div>

@@ -8,44 +8,49 @@
 <div class="container">
   <div class="row">
     <div class="col-md-8">
-      <img
-        src="{{ location.photo }}"
-        alt="{{ location.name }}"
-        class="img-fluid mb-3"
-        style="max-height: 500px; object-fit: cover"
-      />
+      <img src="{{ location.photo }}" alt="{{ location.name }}" class="img-fluid mb-3"
+        style="max-height: 500px; object-fit: cover" />
+      
       <h1>{{ location.name }}</h1>
       <p class="lead">{{ location.description }}</p>
-
+    
       <p>Місцезнаходження: {{ location.city }}, {{ location.country }}</p>
       <p>Рейтинг: {{ location.rating }}</p>
       <p>Ціна за ніч: {{ location.price_per_night }} грн</p>
       <p>Доступно місць: {{ location.amount }}</p>
-
-      <h3>Відгуки</h3>
-      {% for review in reviews %}
-      <div class="card mb-3">
-        <div class="card-body">
-          <h5 class="card-title">{{ review.user.username }}</h5>
-          <p class="card-text">{{ review.comment }}</p>
-          <p class="card-text"><small class="text-muted">Рейтинг: {{ review.rating }}</small></p>
-        </div>
-      </div>
-      {% empty %}
-      <p>Немає відгуків.</p>
-      {% endfor %}
-
+    
+      <!-- Кнопка лайка + кількість лайків -->
+      <form method="post" action="{% url 'booking:like_location' location.id %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-outline-primary">👍 Лайк {{ likes_count }}</button>
+      </form>
       {% if user_review %}
       <p>Ви вже залишили відгук для цього місця.</p>
-      {% else %}
+      {% elif request.user.is_authenticated %}
       <h3>Залишити відгук</h3>
       <form method="post">
         {% csrf_token %}
         {{ review_form.as_p }}
         <button type="submit" class="btn btn-primary">Відправити</button>
       </form>
+      {% else %}
+      <h3>Ви маєте буди авторизованим!</h3>
       {% endif %}
     </div>
+      <h3>Відгуки</h3>
+      {% for review in reviews %}
+        <div class="card mb-3">
+          <div class="card-body">
+            <h5 class="card-title">{{ review.user.username }}</h5>
+            <p class="card-text">{{ review.comment }}</p>
+            <p class="card-text"><small class="text-muted">Рейтинг: {{ review.rating }}</small></p>
+          </div>
+        </div>
+      {% empty %}
+        <p>Немає відгуків.</p>
+      {% endfor %}
+    </div>
+    
 
     <div class="col-md-4">
       <div class="card">
