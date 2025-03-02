@@ -17,6 +17,7 @@ class Location(models.Model):
     )
     like_count = models.PositiveIntegerField(default=0)
     dislike_count = models.PositiveIntegerField(default=0)
+    favourite = models.CharField(max_length=100, default="fa-solid fa-heart-circle-plus")
     amount = models.PositiveIntegerField()
     description = models.TextField()
     photo = models.URLField()
@@ -122,3 +123,11 @@ class Advertisement(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class Favourite(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name="favourites")
+
+    class Meta:
+        unique_together = ('user', 'location')
