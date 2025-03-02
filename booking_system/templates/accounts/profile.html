@@ -83,6 +83,8 @@
         </div>
         {% if not booking.confirmed %}
         <span class="badge bg-warning text-dark">Очікує підтвердження</span>
+        {% else %}
+        <span class="badge bg-info text-dark">{{ booking.total_price }} грн</span>
         {% endif %}
       </li>
       {% endfor %}

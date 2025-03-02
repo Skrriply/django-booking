@@ -22,12 +22,12 @@
       <!-- Кнопка лайка + кількість лайків -->
       <form method="post" action="{% url 'booking:like_location' location.id %}">
         {% csrf_token %}
-        <button type="submit" class="btn btn-outline-primary">👍 Лайк {{ likes_count }}</button>
+        <button type="submit" class="btn btn-outline-primary">👍 Лайк ({{ location.like_count }})</button>
       </form>
       <!-- Dislikes -->
       <form method="post" action="{% url 'booking:dislike_location' location.id %}">
         {% csrf_token %}
-        <button type="submit" class="btn btn-outline-primary">👎 Дізлайк {{ dislikes_count }}</button>
+        <button type="submit" class="btn btn-outline-primary">👎 Дізлайк ({{ location.dislike_count }})</button>
       </form>
       <form method="post" action="{% url 'booking:favourite_location' location.id %}">
         {% csrf_token %}
