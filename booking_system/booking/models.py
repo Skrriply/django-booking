@@ -110,3 +110,15 @@ class Dislike(models.Model):
 
     class Meta:
         unique_together = ('user', 'location')
+
+
+class Advertisement(models.Model):
+    title = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    link = models.URLField(blank=True, null=True)
+    image_url = models.URLField('URL изображения', blank=True, null=True)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
