@@ -30,7 +30,7 @@ class Location(models.Model):
         total_rating = sum(review.rating for review in reviews)
         self.rating = total_rating / reviews.count() if reviews.exists() else 0.0
         self.save()
-    
+
     def is_booked(self) -> bool:
         return self.bookings.filter(
             start_time__lte=now(), end_time__gte=now(), confirmed=True
@@ -59,7 +59,7 @@ class Booking(models.Model):
         return (self.end_time - self.start_time).days  # type: ignore
 
     def total_price(self) -> float:
-        return self.total_days * self.location.price_per_night  # type: ignore
+        return self.total_days() * self.location.price_per_night  # type: ignore
 
     class Meta:
         verbose_name = 'Booking'
@@ -91,16 +91,22 @@ class Review(models.Model):
         ordering = ['-created_at']
         unique_together = ('user', 'location')
 
+
 class Like(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name="likes")
+    location = models.ForeignKey(
+        Location, on_delete=models.CASCADE, related_name='likes'
+    )
 
     class Meta:
         unique_together = ('user', 'location')
 
+
 class Dislike(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name="dislikes")
+    location = models.ForeignKey(
+        Location, on_delete=models.CASCADE, related_name='dislikes'
+    )
 
     class Meta:
         unique_together = ('user', 'location')
