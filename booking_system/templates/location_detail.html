@@ -7,9 +7,9 @@
 {% block content %}
 <div class="container">
   <div class="row">
-    <div class="col-md-8">
-      <img src="{{ location.photo }}" alt="{{ location.name }}" class="img-fluid mb-3"
-        style="max-height: 500px; object-fit: cover" />
+    <!-- Основной контент (слева) -->
+    <div class="col-md-8 order-md-first">
+      <img src="{{ location.photo }}" alt="{{ location.name }}" class="img-fluid mb-3" style="max-height: 500px; object-fit: cover" />
       
       <h1>{{ location.name }}</h1>
       <p class="lead">{{ location.description }}</p>
@@ -24,6 +24,7 @@
         {% csrf_token %}
         <button type="submit" class="btn btn-outline-primary">👍 Лайк {{ likes_count }}</button>
       </form>
+      
       {% if user_review %}
       <p>Ви вже залишили відгук для цього місця.</p>
       {% elif request.user.is_authenticated %}
@@ -37,34 +38,36 @@
       <h3>Ви маєте буди авторизованим!</h3>
       {% endif %}
     </div>
-      <h3>Відгуки</h3>
-      {% for review in reviews %}
-        <div class="card mb-3">
-          <div class="card-body">
-            <h5 class="card-title">{{ review.user.username }}</h5>
-            <p class="card-text">{{ review.comment }}</p>
-            <p class="card-text"><small class="text-muted">Рейтинг: {{ review.rating }}</small></p>
-          </div>
-        </div>
-      {% empty %}
-        <p>Немає відгуків.</p>
-      {% endfor %}
-    </div>
     
-
+    <!-- Колонка с формой бронирования (справа) -->
     <div class="col-md-4">
-      <div class="card">
+      <div class="card mb-3">
         <div class="card-body">
           <h5 class="card-title">Забронювати зараз</h5>
-          <a href="{% url 'booking:create_booking' location.pk %}" class="btn btn-primary">Забронювати</a>
+          <form method="post" action="{% url 'booking:create_booking' location.pk %}">
+            {% csrf_token %} 
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-success">Забронювати</button>
           </form>
         </div>
       </div>
     </div>
   </div>
+  
+  <!-- Відгуки -->
+  <h3>Відгуки</h3>
+  {% for review in reviews %}
+    <div class="card mb-3">
+      <div class="card-body">
+        <h5 class="card-title">{{ review.user.username }}</h5>
+        <p class="card-text">{{ review.comment }}</p>
+        <p class="card-text"><small class="text-muted">Рейтинг: {{ review.rating }}</small></p>
+      </div>
+    </div>
+  {% empty %}
+    <p>Немає відгуків.</p>
+  {% endfor %}
 
-  <a href="{% url 'booking:index' %}" class="btn btn-secondary mt-3"
-    >Назад до списку</a
-  >
+  <a href="{% url 'booking:index' %}" class="btn btn-secondary mt-3">Назад до списку</a>
 </div>
 {% endblock %}
