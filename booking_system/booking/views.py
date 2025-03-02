@@ -53,6 +53,9 @@ def index(request: HttpRequest) -> HttpResponse:
 
     if query:
         locations = locations.filter(name__icontains=query)
+    favourites = Location.objects.filter(id__in=Favourite.objects.filter(user=request.user).values_list('location_id', flat=True))
+
+
     if start_date and end_date:
         start_dt = make_aware(datetime.strptime(start_date, "%Y-%m-%d"))
         end_dt = make_aware(datetime.strptime(end_date, "%Y-%m-%d"))
@@ -89,7 +92,8 @@ def index(request: HttpRequest) -> HttpResponse:
             'booked_location_ids': booked_location_ids,
             'query': query,
             'start_date': start_date,
-            'end_date': end_date
+            'end_date': end_date,
+            'favourites': favourites
         },
     )
 

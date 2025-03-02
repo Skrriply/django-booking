@@ -43,9 +43,60 @@
         </form>
     </div>
     
+<!-- Favourited locations -->
+<h1>Всі збереженні локації | Підказка: нажми на серце щоб зберегти</h1> 
 
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    
+    {% for location in favourites %}
+    <div class="col">
+        <div class="card h-100">
+            <img
+                src="{{ location.photo }}"
+                class="card-img-top"
+                alt="{{ location.name }}"
+                style="height: 200px; object-fit: cover;"
+            />
+            <div class="card-body">
+                <h5 class="card-title">
+                    <a href="{% url 'booking:location_detail' location.id %}" class="text-decoration-none">
+                        {{ location.name }}
+                    </a>
+                </h5>
+                <p class="card-text">{{ location.city }}, {{ location.country }}</p>
+                <p class="card-text">{{ location.price_per_night }} грн / ніч</p>
+
+                <!-- Availability Badge -->
+                {% if location.is_booked %}
+                    <span class="badge bg-danger">Станом на зараз заброньовано</span>
+                {% else %}
+                    <span class="badge bg-success">Станом на зараз доступно</span>
+                {% endif %}
+
+                <!-- Buttons -->
+                <div class="mt-2">
+                    <a href="{% url 'booking:location_detail' location.id %}" class="btn btn-outline-primary">Переглянути</a>
+                    <a href="{% url 'booking:create_booking' location.pk %}" class="btn btn-primary">Забронювати</a>
+                    {{ location.like_count }} <i class="fa-regular fa-thumbs-up"></i> {{ location.dislike_count }} <i class="fa-regular fa-thumbs-down"></i> {% if location in favourites %}
+                    <i class="fa-solid fa-heart"></i>
+                {% else %}
+                    <i class="fa-regular fa-heart"></i>
+                {% endif %}
+                
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p>Нічого не знайдено.</p>
+    {% endfor %}
+</div>
+
+    
     <!-- Локації -->
+    <h1>Усі відсортовані локаціями</h1>
     <div class="row row-cols-1 row-cols-md-3 g-4">
+        
         {% for location in locations %}
         <div class="col">
             <div class="card h-100">
@@ -75,8 +126,11 @@
                     <div class="mt-2">
                         <a href="{% url 'booking:location_detail' location.id %}" class="btn btn-outline-primary">Переглянути</a>
                         <a href="{% url 'booking:create_booking' location.pk %}" class="btn btn-primary">Забронювати</a>
-                        {{ location.like_count }} <i class="fa-regular fa-thumbs-up"></i> {{ location.dislike_count }} <i class="fa-regular fa-thumbs-down"></i> {% if location.favourite %}<i class="{{ location.favourite }}"></i>{% else %}<i class="fa-solid fa-heart-circle-plus"></i>  {% endif %}
-                    
+                        {{ location.like_count }} <i class="fa-regular fa-thumbs-up"></i> {{ location.dislike_count }} <i class="fa-regular fa-thumbs-down"></i> {% if location in favourites %}
+                        <i class="fa-solid fa-heart"></i>
+                    {% else %}
+                        <i class="fa-regular fa-heart"></i>
+                    {% endif %}                    
                     </div>
                 </div>
             </div>
