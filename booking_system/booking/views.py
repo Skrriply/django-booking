@@ -5,9 +5,9 @@ from django.utils.timezone import now, make_aware
 from django.core.mail import send_mail
 from datetime import datetime
 from .forms import BookingForm, ReviewForm
-from .models import Location, Booking, Review, Like, Dislike
+from .models import Location, Booking, Review, Like, Dislike, Favourite
 from django.conf import settings
-from django.db.models import Q
+from django.db.models import Q, F
 
 
 def send_activation_email(request, booking: Booking) -> None:
@@ -40,8 +40,6 @@ def send_activation_email(request, booking: Booking) -> None:
     recipient_list = [booking.user.email]
 
     send_mail(subject, "", settings.EMAIL_HOST_USER, recipient_list, html_message=message)
-#def find_mistake_in_booking(obj) -> bool:
-
 
 
 def index(request: HttpRequest) -> HttpResponse:
@@ -165,18 +163,45 @@ def create_booking(request: HttpRequest, pk: int) -> HttpResponse:
 
 def like_location(request, location_id):
     location = get_object_or_404(Location, id=location_id)
-    
     like, created = Like.objects.get_or_create(user=request.user, location=location)
     
     if created:
-        location.like_count += 1  
-        location.dislike_count -= 1
+        Location.objects.filter(id=location.id).update(like_count=F('like_count') + 1)
+        if Dislike.objects.filter(user=request.user, location=location).exists():
+            Dislike.objects.filter(user=request.user, location=location).delete()
+            Location.objects.filter(id=location.id).update(dislike_count=F('dislike_count') - 1)
     else:
         like.delete()
-        location.like_count -= 1  
-    
+        Location.objects.filter(id=location.id).update(like_count=F('like_count') - 1)
+
+    return redirect("booking:location_detail", pk=location_id)
+
+def dislike_location(request, location_id):
+    location = get_object_or_404(Location, id=location_id)
+    dislike, created = Dislike.objects.get_or_create(user=request.user, location=location)
+
+    if created:
+        Location.objects.filter(id=location.id).update(dislike_count=F('dislike_count') + 1)
+        if Like.objects.filter(user=request.user, location=location).exists():
+            Like.objects.filter(user=request.user, location=location).delete()
+            Location.objects.filter(id=location.id).update(like_count=F('like_count') - 1)
+    else:
+        dislike.delete()
+        Location.objects.filter(id=location.id).update(dislike_count=F('dislike_count') - 1)
+
+    return redirect("booking:location_detail", pk=location_id)
+
+def favourite_location(request, location_id):
+    location = get_object_or_404(Location, id=location_id)
+    favourite, created = Favourite.objects.get_or_create(user=request.user, location=location)
+
+    if created:
+        location.favourite = "fa-solid fa-heart-circle-minus"
+    else:
+        favourite.delete()
+        location.favourite = "fa-solid fa-heart-circle-plus"
+
     location.save()
-    
     return redirect("booking:location_detail", pk=location_id)
 
 def dislike_location(request, location_id):
@@ -195,6 +220,8 @@ def dislike_location(request, location_id):
     location.save()
     
     return redirect("booking:location_detail", pk=location_id)
+
+
 
 
 def activate_post(request: HttpRequest, code: int) -> HttpResponse:

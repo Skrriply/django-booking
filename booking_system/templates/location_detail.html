@@ -29,7 +29,16 @@
         {% csrf_token %}
         <button type="submit" class="btn btn-outline-primary">👎 Дізлайк {{ dislikes_count }}</button>
       </form>
-      
+      <form method="post" action="{% url 'booking:favourite_location' location.id %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-outline-danger">
+            {% if location.is_favourite %}
+                ❤️ Улюблене
+            {% else %}
+                🤍 Додати в улюблене
+            {% endif %}
+        </button>
+    </form>
       {% if user_review %}
       <p>Ви вже залишили відгук для цього місця.</p>
       {% elif request.user.is_authenticated %}
