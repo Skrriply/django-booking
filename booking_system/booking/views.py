@@ -5,7 +5,7 @@ from django.utils.timezone import now, make_aware
 from django.core.mail import send_mail
 from datetime import datetime
 from .forms import BookingForm, ReviewForm
-from .models import Location, Booking, Review, Like, Dislike
+from .models import Location, Booking, Review, Like, Dislike, Favourite
 from django.conf import settings
 from django.db.models import Q
 
@@ -194,6 +194,20 @@ def dislike_location(request, location_id):
 
     location.save()
     return redirect("booking:location_detail", pk=location_id)
+
+def favourite_location(request, location_id):
+    location = get_object_or_404(Location, id=location_id)
+    favourite, created = Favourite.objects.get_or_create(user=request.user, location=location)
+
+    if created:
+        location.favourite = "fa-solid fa-heart-circle-minus"
+    else:
+        favourite.delete()
+        location.favourite = "fa-solid fa-heart-circle-plus"
+
+    location.save()
+    return redirect("booking:location_detail", pk=location_id)
+
 
 
 

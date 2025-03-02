@@ -17,6 +17,8 @@ class Location(models.Model):
     )
     like_count = models.PositiveIntegerField(default=0)
     dislike_count = models.PositiveIntegerField(default=0)
+    favourite = models.CharField(max_length=100)
+
     amount = models.PositiveIntegerField()
     description = models.TextField()
     photo = models.URLField()
@@ -104,3 +106,10 @@ class Dislike(models.Model):
 
     class Meta:
         unique_together = ('user', 'location')
+class Favourite(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name="favourites")
+
+    class Meta:
+        unique_together = ('user', 'location')
+
