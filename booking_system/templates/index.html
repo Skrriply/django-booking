@@ -75,7 +75,7 @@
                     <div class="mt-2">
                         <a href="{% url 'booking:location_detail' location.id %}" class="btn btn-outline-primary">Переглянути</a>
                         <a href="{% url 'booking:create_booking' location.pk %}" class="btn btn-primary">Забронювати</a>
-                        {{ location.like_count }} <i class="fa-regular fa-thumbs-up"></i>
+                        {{ location.like_count }} <i class="fa-regular fa-thumbs-up"></i> {{ location.dislike_count }} <i class="fa-regular fa-thumbs-down"></i>
                     </div>
                 </div>
             </div>

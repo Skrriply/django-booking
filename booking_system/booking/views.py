@@ -5,7 +5,7 @@ from django.utils.timezone import now, make_aware
 from django.core.mail import send_mail
 from datetime import datetime
 from .forms import BookingForm, ReviewForm
-from .models import Location, Booking, Review, Like
+from .models import Location, Booking, Review, Like, Dislike
 from django.conf import settings
 from django.db.models import Q
 
@@ -170,9 +170,27 @@ def like_location(request, location_id):
     
     if created:
         location.like_count += 1  
+        location.dislike_count -= 1
     else:
         like.delete()
         location.like_count -= 1  
+    
+    location.save()
+    
+    return redirect("booking:location_detail", pk=location_id)
+
+def dislike_location(request, location_id):
+    location = get_object_or_404(Location, id=location_id)
+    
+    dislike, created = Dislike.objects.get_or_create(user=request.user, location=location)
+    
+    if created:
+        location.dislike_count += 1
+        location.like_count -= 1
+        
+    else:
+        dislike.delete()
+        location.dislike_count -= 1  
     
     location.save()
     

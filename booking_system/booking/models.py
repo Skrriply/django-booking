@@ -16,6 +16,7 @@ class Location(models.Model):
         validators=[MinValueValidator(0), MaxValueValidator(5)], default=0
     )
     like_count = models.PositiveIntegerField(default=0)
+    dislike_count = models.PositiveIntegerField(default=0)
     amount = models.PositiveIntegerField()
     description = models.TextField()
     photo = models.URLField()
@@ -93,6 +94,13 @@ class Review(models.Model):
 class Like(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name="likes")
+
+    class Meta:
+        unique_together = ('user', 'location')
+
+class Dislike(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name="dislikes")
 
     class Meta:
         unique_together = ('user', 'location')
