@@ -7,7 +7,7 @@ from datetime import datetime
 from .forms import BookingForm, ReviewForm
 from .models import Location, Booking, Review, Like, Dislike, Favourite
 from django.conf import settings
-from django.db.models import Q
+from django.db.models import Q, F
 
 
 def send_activation_email(request, booking: Booking) -> None:
@@ -168,15 +168,14 @@ def like_location(request, location_id):
     like, created = Like.objects.get_or_create(user=request.user, location=location)
     
     if created:
-        location.like_count = max(0, location.like_count + 1)
+        Location.objects.filter(id=location.id).update(like_count=F('like_count') + 1)
         if Dislike.objects.filter(user=request.user, location=location).exists():
             Dislike.objects.filter(user=request.user, location=location).delete()
-            location.dislike_count = max(0, location.dislike_count - 1)
+            Location.objects.filter(id=location.id).update(dislike_count=F('dislike_count') - 1)
     else:
         like.delete()
-        location.like_count = max(0, location.like_count - 1)
+        Location.objects.filter(id=location.id).update(like_count=F('like_count') - 1)
 
-    location.save()
     return redirect("booking:location_detail", pk=location_id)
 
 def dislike_location(request, location_id):
@@ -184,15 +183,14 @@ def dislike_location(request, location_id):
     dislike, created = Dislike.objects.get_or_create(user=request.user, location=location)
 
     if created:
-        location.dislike_count = max(0, location.dislike_count + 1)
+        Location.objects.filter(id=location.id).update(dislike_count=F('dislike_count') + 1)
         if Like.objects.filter(user=request.user, location=location).exists():
             Like.objects.filter(user=request.user, location=location).delete()
-            location.like_count = max(0, location.like_count - 1)
+            Location.objects.filter(id=location.id).update(like_count=F('like_count') - 1)
     else:
         dislike.delete()
-        location.dislike_count = max(0, location.dislike_count - 1)
+        Location.objects.filter(id=location.id).update(dislike_count=F('dislike_count') - 1)
 
-    location.save()
     return redirect("booking:location_detail", pk=location_id)
 
 def favourite_location(request, location_id):

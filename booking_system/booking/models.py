@@ -17,7 +17,7 @@ class Location(models.Model):
     )
     like_count = models.PositiveIntegerField(default=0)
     dislike_count = models.PositiveIntegerField(default=0)
-    favourite = models.CharField(max_length=100)
+    favourite = models.CharField(max_length=100, default="fa-solid fa-heart-circle-plus")
 
     amount = models.PositiveIntegerField()
     description = models.TextField()
