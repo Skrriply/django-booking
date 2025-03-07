@@ -69,7 +69,8 @@ def index(request: HttpRequest) -> HttpResponse:
         'price': 'price_per_night',
         'rating': '-rating',
     }
-
+    
+    favourites = Location.objects.filter(id__in=Favourite.objects.filter(user=request.user).values_list('location_id', flat=True))
     if sort_by in ordering_options:
         locations = locations.order_by(ordering_options[sort_by])
 
@@ -87,7 +88,8 @@ def index(request: HttpRequest) -> HttpResponse:
             'booked_location_ids': booked_location_ids,
             'query': query,
             'start_date': start_date,
-            'end_date': end_date
+            'end_date': end_date,
+            'favourites': favourites
         },
     )
 
@@ -196,30 +198,14 @@ def favourite_location(request, location_id):
     favourite, created = Favourite.objects.get_or_create(user=request.user, location=location)
 
     if created:
-        location.favourite = "fa-solid fa-heart-circle-minus"
+        location.is_favourited = False
     else:
         favourite.delete()
-        location.favourite = "fa-solid fa-heart-circle-plus"
+        location.is_favourited = True
 
     location.save()
     return redirect("booking:location_detail", pk=location_id)
 
-def dislike_location(request, location_id):
-    location = get_object_or_404(Location, id=location_id)
-    
-    dislike, created = Dislike.objects.get_or_create(user=request.user, location=location)
-    
-    if created:
-        location.dislike_count += 1
-        location.like_count -= 1
-        
-    else:
-        dislike.delete()
-        location.dislike_count -= 1  
-    
-    location.save()
-    
-    return redirect("booking:location_detail", pk=location_id)
 
 
 
