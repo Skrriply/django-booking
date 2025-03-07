@@ -1,4 +1,4 @@
-<!-- {% extends 'base/_base.html' %}
+{% extends 'base/_base.html' %}
 {% load static %}
 
 {% block title %}
@@ -65,7 +65,7 @@
                 </h5>
                 <p class="card-text">{{ location.city }}, {{ location.country }}</p>
                 <p class="card-text">{{ location.price_per_night }} грн / ніч</p>
-<<<<<<< HEAD
+
 
                 <!-- Availability Badge -->
                 {% if location.is_booked %}
@@ -115,8 +115,7 @@
                     </h5>
                     <p class="card-text">{{ location.city }}, {{ location.country }}</p>
                     <p class="card-text">{{ location.price_per_night }} грн / ніч</p>
-=======
->>>>>>> pr-54
+
 
                 <!-- Availability Badge -->
                 {% if location.is_booked %}
@@ -125,7 +124,7 @@
                     <span class="badge bg-success">Станом на зараз доступно</span>
                 {% endif %}
 
-<<<<<<< HEAD
+
                     <!-- Buttons -->
                     <div class="mt-2">
                         <a href="{% url 'booking:location_detail' location.id %}" class="btn btn-outline-primary">Переглянути</a>
@@ -136,8 +135,7 @@
                         <i class="fa-regular fa-heart"></i>
                     {% endif %}                    
                     </div>
-=======
-                <!-- Buttons -->
+                <!-- Buttons
                 <div class="mt-2">
                     <a href="{% url 'booking:location_detail' location.id %}" class="btn btn-outline-primary">Переглянути</a>
                     <a href="{% url 'booking:create_booking' location.pk %}" class="btn btn-primary">Забронювати</a>
@@ -145,9 +143,9 @@
                     <i class="fa-solid fa-heart"></i>
                 {% else %}
                     <i class="fa-regular fa-heart"></i>
-                {% endif %}
+                {% endif %} -->
                 
->>>>>>> pr-54
+
                 </div>
             </div>
         </div>
@@ -156,7 +154,7 @@
     <p>Нічого не знайдено.</p>
     {% endfor %}
 </div>
-<!-- Локації -->
+<!-- Локації
 <h1>Усі відсортовані локації</h1>
 <div class="row row-cols-1 row-cols-md-3 g-4">
     
@@ -179,13 +177,13 @@
                 <p class="card-text">{{ location.price_per_night }} грн / ніч</p>
 
                 <!-- Availability Badge -->
-                {% if location.is_booked %}
+                <!-- {% if location.is_booked %}
                     <span class="badge bg-danger">Станом на зараз заброньовано</span>
                 {% else %}
                     <span class="badge bg-success">Станом на зараз доступно</span>
                 {% endif %}
 
-                <!-- Buttons -->
+                
                 <div class="mt-2">
                     <a href="{% url 'booking:location_detail' location.id %}" class="btn btn-outline-primary">Переглянути</a>
                     <a href="{% url 'booking:create_booking' location.pk %}" class="btn btn-primary">Забронювати</a>
@@ -202,7 +200,7 @@
     <p>Нічого не знайдено.</p>
     {% endfor %}
 </div>
-</div>
+</div> --> 
 
 <!-- Кнопка -->
 <div class="modal-footer">
@@ -235,4 +233,4 @@
         myModal.show();
     });
 </script>
-{% endblock %} -->
+{% endblock %}
