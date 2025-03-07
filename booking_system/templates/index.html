@@ -1,4 +1,4 @@
-{% extends 'base/_base.html' %}
+<!-- {% extends 'base/_base.html' %}
 {% load static %}
 
 {% block title %}
@@ -65,6 +65,7 @@
                 </h5>
                 <p class="card-text">{{ location.city }}, {{ location.country }}</p>
                 <p class="card-text">{{ location.price_per_night }} грн / ніч</p>
+<<<<<<< HEAD
 
                 <!-- Availability Badge -->
                 {% if location.is_booked %}
@@ -114,14 +115,17 @@
                     </h5>
                     <p class="card-text">{{ location.city }}, {{ location.country }}</p>
                     <p class="card-text">{{ location.price_per_night }} грн / ніч</p>
+=======
+>>>>>>> pr-54
 
-                    <!-- Availability Badge -->
-                    {% if location.is_booked %}
-                        <span class="badge bg-danger">Станом на зараз заброньовано</span>
-                    {% else %}
-                        <span class="badge bg-success">Станом на зараз доступно</span>
-                    {% endif %}
+                <!-- Availability Badge -->
+                {% if location.is_booked %}
+                    <span class="badge bg-danger">Станом на зараз заброньовано</span>
+                {% else %}
+                    <span class="badge bg-success">Станом на зараз доступно</span>
+                {% endif %}
 
+<<<<<<< HEAD
                     <!-- Buttons -->
                     <div class="mt-2">
                         <a href="{% url 'booking:location_detail' location.id %}" class="btn btn-outline-primary">Переглянути</a>
@@ -132,44 +136,103 @@
                         <i class="fa-regular fa-heart"></i>
                     {% endif %}                    
                     </div>
+=======
+                <!-- Buttons -->
+                <div class="mt-2">
+                    <a href="{% url 'booking:location_detail' location.id %}" class="btn btn-outline-primary">Переглянути</a>
+                    <a href="{% url 'booking:create_booking' location.pk %}" class="btn btn-primary">Забронювати</a>
+                    {{ location.like_count }} <i class="fa-regular fa-thumbs-up"></i> {{ location.dislike_count }} <i class="fa-regular fa-thumbs-down"></i> {% if location in favourites %}
+                    <i class="fa-solid fa-heart"></i>
+                {% else %}
+                    <i class="fa-regular fa-heart"></i>
+                {% endif %}
+                
+>>>>>>> pr-54
                 </div>
             </div>
         </div>
-        {% empty %}
-        <p>Нічого не знайдено.</p>
-        {% endfor %}
+    </div>
+    {% empty %}
+    <p>Нічого не знайдено.</p>
+    {% endfor %}
+</div>
+<!-- Локації -->
+<h1>Усі відсортовані локації</h1>
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    
+    {% for location in locations %}
+    <div class="col">
+        <div class="card h-100">
+            <img
+                src="{{ location.photo }}"
+                class="card-img-top"
+                alt="{{ location.name }}"
+                style="height: 200px; object-fit: cover;"
+            />
+            <div class="card-body">
+                <h5 class="card-title">
+                    <a href="{% url 'booking:location_detail' location.id %}" class="text-decoration-none">
+                        {{ location.name }}
+                    </a>
+                </h5>
+                <p class="card-text">{{ location.city }}, {{ location.country }}</p>
+                <p class="card-text">{{ location.price_per_night }} грн / ніч</p>
+
+                <!-- Availability Badge -->
+                {% if location.is_booked %}
+                    <span class="badge bg-danger">Станом на зараз заброньовано</span>
+                {% else %}
+                    <span class="badge bg-success">Станом на зараз доступно</span>
+                {% endif %}
+
+                <!-- Buttons -->
+                <div class="mt-2">
+                    <a href="{% url 'booking:location_detail' location.id %}" class="btn btn-outline-primary">Переглянути</a>
+                    <a href="{% url 'booking:create_booking' location.pk %}" class="btn btn-primary">Забронювати</a>
+                    {{ location.like_count }} <i class="fa-regular fa-thumbs-up"></i> {{ location.dislike_count }} <i class="fa-regular fa-thumbs-down"></i> {% if location in favourites %}
+                    <i class="fa-solid fa-heart"></i>
+                {% else %}
+                    <i class="fa-regular fa-heart"></i>
+                {% endif %}                    
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p>Нічого не знайдено.</p>
+    {% endfor %}
+</div>
+</div>
+
+<!-- Кнопка -->
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary rounded-circle p-3" id="hoverButton" style="width: 60px; height: 60px;" data-bs-dismiss="modal">
+        <i class="fa-solid fa-phone-volume"></i></button>
+</div>
+
+<!-- Модальне вікно -->
+<div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Наші контакти</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрити"></button>
+            </div>
+            <div class="modal-body">
+                <p>📧 Написати email <code>nemo.bma@gmail.com</code></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрити</button>
+            </div>
+        </div>
     </div>
 </div>
 
-    <!-- Кнопка -->
-    <div class="modal-footer">
-        <button type="button" class="btn btn-primary rounded-circle p-3" id="hoverButton" style="width: 60px; height: 60px;" data-bs-dismiss="modal">
-            <i class="fa-solid fa-phone-volume"></i></button>
-    </div>
-
-    <!-- Модальне вікно -->
-    <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Наші контакти</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрити"></button>
-                </div>
-                <div class="modal-body">
-                    <p>📧 Написати email <code>nemo.bma@gmail.com</code></p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрити</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Скрипт для відкриття модального вікна при наведенні -->
-    <script>
-        document.getElementById("hoverButton").addEventListener("mouseenter", function() {
-            var myModal = new bootstrap.Modal(document.getElementById('myModal'));
-            myModal.show();
-        });
-    </script>
-{% endblock %}
+<!-- Скрипт для відкриття модального вікна при наведенні -->
+<script>
+    document.getElementById("hoverButton").addEventListener("mouseenter", function() {
+        var myModal = new bootstrap.Modal(document.getElementById('myModal'));
+        myModal.show();
+    });
+</script>
+{% endblock %} -->

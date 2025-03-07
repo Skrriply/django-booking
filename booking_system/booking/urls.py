@@ -13,5 +13,4 @@ urlpatterns = [
     path("like/<int:location_id>/", views.like_location, name="like_location"),
     path("dislike/<int:location_id>/", views.dislike_location, name="dislike_location"),
     path("favourite/<int:location_id>/", views.favourite_location, name="favourite_location"),
-    
 ]
