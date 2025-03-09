@@ -51,11 +51,11 @@ def index(request: HttpRequest) -> HttpResponse:
 
     if query:
         locations = locations.filter(name__icontains=query)
+
     if start_date and end_date:
         start_dt = make_aware(datetime.strptime(start_date, "%Y-%m-%d"))
         end_dt = make_aware(datetime.strptime(end_date, "%Y-%m-%d"))
 
-        # Вибираємо тільки ті локації, які НЕ мають підтверджених бронювань у цей період
         booked_location_ids = Booking.objects.filter(
             confirmed=True
         ).filter(
@@ -70,10 +70,16 @@ def index(request: HttpRequest) -> HttpResponse:
         'rating': '-rating',
     }
 
+    # Проверяем, авторизован ли пользователь, перед выбором избранного
+    favourites = []
+    if request.user.is_authenticated:
+        favourites = Location.objects.filter(
+            id__in=Favourite.objects.filter(user=request.user).values_list('location_id', flat=True)
+        )
+
     if sort_by in ordering_options:
         locations = locations.order_by(ordering_options[sort_by])
 
-    # Знаходження локацій з активними бронюваннями
     booked_location_ids = Booking.objects.filter(
         Q(start_time__lte=now(), end_time__gte=now())
     ).values_list('location_id', flat=True)
@@ -87,9 +93,11 @@ def index(request: HttpRequest) -> HttpResponse:
             'booked_location_ids': booked_location_ids,
             'query': query,
             'start_date': start_date,
-            'end_date': end_date
+            'end_date': end_date,
+            'favourites': favourites
         },
     )
+
 
 
 def location_detail(request, pk):
@@ -160,7 +168,7 @@ def create_booking(request: HttpRequest, pk: int) -> HttpResponse:
         form = BookingForm(initial={'start_time': now()})
 
     return render(request, 'booking_form.html', {'form': form, 'location': location})
-
+@login_required
 def like_location(request, location_id):
     location = get_object_or_404(Location, id=location_id)
     like, created = Like.objects.get_or_create(user=request.user, location=location)
@@ -175,7 +183,7 @@ def like_location(request, location_id):
         Location.objects.filter(id=location.id).update(like_count=F('like_count') - 1)
 
     return redirect("booking:location_detail", pk=location_id)
-
+@login_required
 def dislike_location(request, location_id):
     location = get_object_or_404(Location, id=location_id)
     dislike, created = Dislike.objects.get_or_create(user=request.user, location=location)
@@ -190,36 +198,20 @@ def dislike_location(request, location_id):
         Location.objects.filter(id=location.id).update(dislike_count=F('dislike_count') - 1)
 
     return redirect("booking:location_detail", pk=location_id)
-
+@login_required
 def favourite_location(request, location_id):
     location = get_object_or_404(Location, id=location_id)
     favourite, created = Favourite.objects.get_or_create(user=request.user, location=location)
 
     if created:
-        location.favourite = "fa-solid fa-heart-circle-minus"
+        location.is_favourited = False
     else:
         favourite.delete()
-        location.favourite = "fa-solid fa-heart-circle-plus"
+        location.is_favourited = True
 
     location.save()
     return redirect("booking:location_detail", pk=location_id)
 
-def dislike_location(request, location_id):
-    location = get_object_or_404(Location, id=location_id)
-    
-    dislike, created = Dislike.objects.get_or_create(user=request.user, location=location)
-    
-    if created:
-        location.dislike_count += 1
-        location.like_count -= 1
-        
-    else:
-        dislike.delete()
-        location.dislike_count -= 1  
-    
-    location.save()
-    
-    return redirect("booking:location_detail", pk=location_id)
 
 
 

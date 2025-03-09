@@ -27,7 +27,7 @@
       <!-- Dislikes -->
       <form method="post" action="{% url 'booking:dislike_location' location.id %}">
         {% csrf_token %}
-        <button type="submit" class="btn btn-outline-primary">👎 Дізлайк ({{ location.dislike_count }})</button>
+        <button type="submit" class="btn btn-outline-primary">👎 Дізлайк {{ location.dislike_count }}</button>
       </form>
       <form method="post" action="{% url 'booking:favourite_location' location.id %}">
         {% csrf_token %}
@@ -39,6 +39,7 @@
             {% endif %}
         </button>
     </form>
+      
       {% if user_review %}
       <p>Ви вже залишили відгук для цього місця.</p>
       {% elif request.user.is_authenticated %}
