@@ -22,6 +22,31 @@
       referrerpolicy="no-referrer"
     />
     <title>{% block title %}{% endblock title %}</title>
+    <style>
+      #left-ad, #right-ad {
+        position: fixed;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 9999;
+      }
+      #left-ad {
+        left: 10px;
+      }
+      #right-ad {
+        right: 10px;
+      }
+      @media (max-width: 768px) {
+        #left-ad, #right-ad {
+          display: none;
+        }
+      }
+      .ad-banner-img {
+          width: 225px;
+          height: 300px;
+          object-fit: cover;
+          object-position: center;
+      }
+    </style>
   </head>
 
   <body class="d-flex flex-column min-vh-100">
@@ -34,5 +59,40 @@
       crossorigin="anonymous"
     ></script>
     {% endblock %}
+
+    {# Рекламные баннеры (не показываем для staff) #}
+    {% if left_advertisement %}
+    <div id="left-ad">
+      <div class="card">
+        {% if left_advertisement.image_url %}
+        <img src="{{ left_advertisement.image_url }}" class="card-img-top ad-banner-img" alt="{{ left_advertisement.title }}">
+        {% endif %}
+        <div class="card-body text-center">
+          <h6 class="card-title">{{ left_advertisement.title }}</h6>
+          <p class="small">{{ left_advertisement.description }}</p>
+          {% if left_advertisement.link %}
+          <a href="{{ left_advertisement.link }}" class="btn btn-sm btn-primary">Детальніше</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    {% if right_advertisement %}
+    <div id="right-ad">
+      <div class="card">
+        {% if right_advertisement.image_url %}
+        <img src="{{ right_advertisement.image_url }}" class="card-img-top ad-banner-img" alt="{{ right_advertisement.title }}">
+        {% endif %}
+        <div class="card-body text-center">
+          <h6 class="card-title">{{ right_advertisement.title }}</h6>
+          <p class="small">{{ right_advertisement.description }}</p>
+          {% if right_advertisement.link %}
+          <a href="{{ right_advertisement.link }}" class="btn btn-sm btn-primary">Детальніше</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% endif %}
   </body>
 </html>

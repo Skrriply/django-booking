@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Booking, Location, Review
+from .models import Advertisement, Booking, Location, Review
 
 
 @admin.register(Location)
@@ -31,3 +31,9 @@ class ReviewAdmin(admin.ModelAdmin):
     list_filter = ['rating']
     search_fields = ['user__username', 'location__name']
     ordering = ['-created_at']
+
+@admin.register(Advertisement)
+class AdvertisementAdmin(admin.ModelAdmin):
+    list_display = ('title', 'is_active', 'created_at')
+    list_filter = ('is_active',)
+    search_fields = ('title', 'description')
