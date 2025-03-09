@@ -39,7 +39,7 @@ class Location(models.Model):
     class Meta:
         verbose_name = 'Location'
         verbose_name_plural = 'Locations'
-        ordering = ['amount']
+        ordering = ['created_at']
 
 
 class Booking(models.Model):
