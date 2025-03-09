@@ -7,14 +7,14 @@ from datetime import datetime
 from .forms import BookingForm, ReviewForm
 from .models import Location, Booking, Review, Like, Dislike
 from django.conf import settings
-from django.db.models import Q
+from django.db.models import Q, F
 
 
 def send_activation_email(request, booking: Booking) -> None:
     subject = 'Підтвердження бронювання'
-    base_url = f"{request.scheme}://{request.get_host()}"
+    base_url = f'{request.scheme}://{request.get_host()}'
     activation_link = f'{base_url}/activate/{booking.activation_code}/'
-    
+
     message = f"""
     <html>
     <head>
@@ -39,9 +39,9 @@ def send_activation_email(request, booking: Booking) -> None:
     """
     recipient_list = [booking.user.email]
 
-    send_mail(subject, "", settings.EMAIL_HOST_USER, recipient_list, html_message=message)
-#def find_mistake_in_booking(obj) -> bool:
-
+    send_mail(
+        subject, '', settings.EMAIL_HOST_USER, recipient_list, html_message=message
+    )
 
 
 def index(request: HttpRequest) -> HttpResponse:
@@ -54,15 +54,15 @@ def index(request: HttpRequest) -> HttpResponse:
     if query:
         locations = locations.filter(name__icontains=query)
     if start_date and end_date:
-        start_dt = make_aware(datetime.strptime(start_date, "%Y-%m-%d"))
-        end_dt = make_aware(datetime.strptime(end_date, "%Y-%m-%d"))
+        start_dt = make_aware(datetime.strptime(start_date, '%Y-%m-%d'))
+        end_dt = make_aware(datetime.strptime(end_date, '%Y-%m-%d'))
 
         # Вибираємо тільки ті локації, які НЕ мають підтверджених бронювань у цей період
-        booked_location_ids = Booking.objects.filter(
-            confirmed=True
-        ).filter(
-            Q(start_time__lt=end_dt, end_time__gt=start_dt)
-        ).values_list('location_id', flat=True)
+        booked_location_ids = (
+            Booking.objects.filter(confirmed=True)
+            .filter(Q(start_time__lt=end_dt, end_time__gt=start_dt))
+            .values_list('location_id', flat=True)
+        )
 
         locations = locations.exclude(id__in=booked_location_ids)
 
@@ -89,7 +89,7 @@ def index(request: HttpRequest) -> HttpResponse:
             'booked_location_ids': booked_location_ids,
             'query': query,
             'start_date': start_date,
-            'end_date': end_date
+            'end_date': end_date,
         },
     )
 
@@ -144,16 +144,18 @@ def create_booking(request: HttpRequest, pk: int) -> HttpResponse:
             booking.location = location
             booking.confirmed = False
 
-
             overlapping_bookings = Booking.objects.filter(
-                location=location,
-                confirmed=True
+                location=location, confirmed=True
             ).filter(
                 Q(start_time__lt=booking.end_time, end_time__gt=booking.start_time)
             )
             if overlapping_bookings.exists():
-                form.add_error(None, 'Цей час уже зайнятий. Будь ласка, оберіть інший період.')
-                return render(request, 'booking_form.html', {'form': form, 'location': location})
+                form.add_error(
+                    None, 'Цей час уже зайнятий. Будь ласка, оберіть інший період.'
+                )
+                return render(
+                    request, 'booking_form.html', {'form': form, 'location': location}
+                )
 
             send_activation_email(request, booking)
             booking.save()
@@ -163,38 +165,51 @@ def create_booking(request: HttpRequest, pk: int) -> HttpResponse:
 
     return render(request, 'booking_form.html', {'form': form, 'location': location})
 
+
+@login_required
 def like_location(request, location_id):
+    if not request.user.is_authenticated:
+        return redirect('login')
     location = get_object_or_404(Location, id=location_id)
-    
     like, created = Like.objects.get_or_create(user=request.user, location=location)
-    
+
     if created:
-        location.like_count += 1  
-        location.dislike_count -= 1
+        Location.objects.filter(id=location.id).update(like_count=F('like_count') + 1)
+        if Dislike.objects.filter(user=request.user, location=location).exists():
+            Dislike.objects.filter(user=request.user, location=location).delete()
+            Location.objects.filter(id=location.id).update(
+                dislike_count=F('dislike_count') - 1
+            )
     else:
         like.delete()
-        location.like_count -= 1  
-    
-    location.save()
-    
-    return redirect("booking:location_detail", pk=location_id)
+        Location.objects.filter(id=location.id).update(like_count=F('like_count') - 1)
 
+    return redirect('booking:location_detail', pk=location_id)
+
+
+@login_required
 def dislike_location(request, location_id):
     location = get_object_or_404(Location, id=location_id)
-    
-    dislike, created = Dislike.objects.get_or_create(user=request.user, location=location)
-    
+    dislike, created = Dislike.objects.get_or_create(
+        user=request.user, location=location
+    )
+
     if created:
-        location.dislike_count += 1
-        location.like_count -= 1
-        
+        Location.objects.filter(id=location.id).update(
+            dislike_count=F('dislike_count') + 1
+        )
+        if Like.objects.filter(user=request.user, location=location).exists():
+            Like.objects.filter(user=request.user, location=location).delete()
+            Location.objects.filter(id=location.id).update(
+                like_count=F('like_count') - 1
+            )
     else:
         dislike.delete()
-        location.dislike_count -= 1  
-    
-    location.save()
-    
-    return redirect("booking:location_detail", pk=location_id)
+        Location.objects.filter(id=location.id).update(
+            dislike_count=F('dislike_count') - 1
+        )
+
+    return redirect('booking:location_detail', pk=location_id)
 
 
 def activate_post(request: HttpRequest, code: int) -> HttpResponse:
