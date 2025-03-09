@@ -53,7 +53,6 @@ python booking_system\manage.py runserver
 - [NazarUsius](https://github.com/NazarUsius)
 - [Slekatom](https://github.com/Slekatom)
 - [UsernameMeF](https://github.com/UsernameMeF)
-- [Maksum10123](https://github.com/Maksum10123)
 
 ## ⚖️ Ліцензія
 
