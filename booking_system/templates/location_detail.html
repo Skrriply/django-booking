@@ -40,17 +40,13 @@
             </form>
           </div>
 
-          {% if user_review %}
-            <p>Ви вже залишили відгук для цього місця.</p>
-          {% elif request.user.is_authenticated %}
+          {% if request.user.is_authenticated and not user_review %}
             <h3>Залишити відгук</h3>
             <form method="post">
               {% csrf_token %}
               {{ review_form|crispy }}
               <button type="submit" class="btn btn-primary">Відправити</button>
             </form>
-          {% else %}
-            <h3>Ви маєте бути авторизованим!</h3>
           {% endif %}
         </div>
       </div>
@@ -78,7 +74,8 @@
           <h5 class="card-title">{{ review.user.username }}</h5>
           <p class="card-text">{{ review.comment }}</p>
           <p class="card-text"><small class="text-muted">Рейтинг: {{ review.rating }}</small></p>
-          {% if review.user == request.user %}
+          {% if review.user == request.user or request.user.is_staff %}
+          {% csrf_token %}
           <a href="{% url 'booking:delete_review' review.id %}">Видалити</a>
           {% endif %}
         </div>
