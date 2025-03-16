@@ -6,12 +6,18 @@ User = get_user_model()
 
 
 class LoginForm(forms.Form):
+    """Форма для входу в обліковий запис."""
+
     username = forms.CharField(widget=forms.TextInput())
     password = forms.CharField(widget=forms.PasswordInput())
 
 
 class RegisterForm(UserCreationForm):
+    """Форма для реєстрації."""
+
     class Meta:
+        """Метаклас форми, який визначає метадані форми."""
+
         model = User
         fields = [
             'username',

@@ -8,6 +8,15 @@ from .forms import LoginForm, RegisterForm
 
 
 def login_view(request: HttpRequest) -> HttpResponse:
+    """
+    Відображає сторінку входу в обліковий запис.
+
+    Args:
+        request (HttpRequest): Запит.
+
+    Returns:
+        HttpResponse: Відповідь сервера.
+    """
     form = LoginForm(request.POST or None)
 
     if request.method == 'POST' and form.is_valid():
@@ -25,6 +34,15 @@ def login_view(request: HttpRequest) -> HttpResponse:
 
 
 def register_view(request: HttpRequest) -> HttpResponse:
+    """
+    Відображає сторінку реєстрації.
+
+    Args:
+        request (HttpRequest): Запит.
+
+    Returns:
+        HttpResponse: Відповідь сервера.
+    """
     form = RegisterForm(request.POST or None)
 
     if request.method == 'POST' and form.is_valid():
@@ -37,6 +55,15 @@ def register_view(request: HttpRequest) -> HttpResponse:
 
 @login_required
 def logout_view(request: HttpRequest) -> HttpResponse:
+    """
+    Виходить з облікового запису користувача.
+
+    Args:
+        request (HttpRequest): Запит.
+
+    Returns:
+        HttpResponse: Відповідь сервера.
+    """
     logout(request)
     messages.success(request, 'Ви успішно вийшли з облікового запису.')
 
@@ -45,6 +72,15 @@ def logout_view(request: HttpRequest) -> HttpResponse:
 
 @login_required
 def profile_view(request: HttpRequest) -> HttpResponse:
+    """
+    Відображає сторінку профілю користувача.
+
+    Args:
+        request (HttpRequest): Запит.
+
+    Returns:
+        HttpResponse: Відповідь сервера.
+    """
     user = request.user
     bookings = user.bookings.all()
 
