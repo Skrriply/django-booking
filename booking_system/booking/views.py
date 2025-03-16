@@ -135,11 +135,6 @@ def location_detail(request: HttpRequest, pk: int) -> HttpResponse:
     )
 
 
-def find_location(id: int) -> Location:
-    location = Location.objects.filter(id=id).first()
-    return location
-
-
 @login_required()
 def create_booking(request: HttpRequest, pk: int) -> HttpResponse:
     location = get_object_or_404(Location, id=pk)

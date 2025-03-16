@@ -21,12 +21,3 @@ class RegisterForm(UserCreationForm):
             'password1',
             'password2',
         ]
-
-        widgets = {
-            'username': forms.TextInput(),
-            'email': forms.EmailInput(),
-            'first_name': forms.TextInput(),
-            'last_name': forms.TextInput(),
-            'password1': forms.PasswordInput(),
-            'password2': forms.PasswordInput(),
-        }
