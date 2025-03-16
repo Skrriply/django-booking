@@ -1,77 +1,58 @@
+from datetime import datetime
+
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.core.mail import send_mail
+from django.db.models import F
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.utils.timezone import now, make_aware
-from django.core.mail import send_mail
-from datetime import datetime
+from django.utils.timezone import make_aware, now
+
 from .forms import BookingForm, ReviewForm
-from .models import Location, Booking, Review, Like, Dislike, Favourite
-from django.conf import settings
-from django.db.models import Q, F
-
-
-def send_activation_email(request: HttpRequest, booking: Booking) -> None:
-    subject = 'Підтвердження бронювання'
-    base_url = f'{request.scheme}://{request.get_host()}'
-    activation_link = f'{base_url}/activate/{booking.activation_code}/'
-
-    message = f"""
-    <html>
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Підтвердження бронювання</title>
-    </head>
-    <body style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px; text-align: center;">
-        <div style="max-width: 500px; margin: auto; background-color: #ffffff; padding: 25px; border-radius: 10px; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);">
-            <h2 style="color: #333; margin-bottom: 20px;">Підтвердження бронювання</h2>
-            <p style="color: #555; line-height: 1.5;">Дякуємо за ваше бронювання в <strong>{booking.location.name}</strong>!</p>
-            <p style="color: #555; line-height: 1.5;">Для його підтвердження, будь ласка, натисніть кнопку нижче:</p>
-            <p style="margin: 20px 0;">
-                <a href="{activation_link}" style="display: inline-block; padding: 12px 24px; background-color: #28a745; color: #ffffff; text-decoration: none; font-size: 16px; font-weight: bold; border-radius: 5px;">Підтвердити бронювання</a>
-            </p>
-            <p style="color: #555; line-height: 1.5;">Ваше бронювання з <strong>{booking.start_time.strftime('%d.%m.%Y')}</strong> по <strong>{booking.end_time.strftime('%d.%m.%Y')}</strong>.</p>
-            <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
-            <p style="font-size: 12px; color: #777; line-height: 1.5;">Якщо ви не здійснювали це бронювання, просто проігноруйте цей лист.</p>
-        </div>
-    </body>
-    </html>
-    """
-    recipient_list = [booking.user.email]
-
-    send_mail(
-        subject, '', settings.EMAIL_HOST_USER, recipient_list, html_message=message
-    )
+from .models import Booking, Dislike, Favourite, Like, Location, Review
 
 
 def index(request: HttpRequest) -> HttpResponse:
+    """
+    Відображає головну сторінку зі списком локацій.
+
+    Args:
+        request (HttpRequest): Запит.
+
+    Returns:
+        HttpResponse: Відповідь сервера зі списком локацій.
+    """
     locations = Location.objects.all()
+
+    # Параметри сортування та фільтрування
     sort_by = request.GET.get('sort_by', 'name')
     query = request.GET.get('q', '')
     start_date = request.GET.get('start_date')
     end_date = request.GET.get('end_date')
 
-    if query:
-        locations = locations.filter(name__icontains=query)
-
-    if start_date and end_date:
-        start_dt = make_aware(datetime.strptime(start_date, '%Y-%m-%d'))
-        end_dt = make_aware(datetime.strptime(end_date, '%Y-%m-%d'))
-
-        booked_location_ids = (
-            Booking.objects.filter(confirmed=True)
-            .filter(Q(start_time__lt=end_dt, end_time__gt=start_dt))
-            .values_list('location_id', flat=True)
-        )
-
-        locations = locations.exclude(id__in=booked_location_ids)
-
+    # Сортування
     ordering_options = {
         'name': 'name',
         'price': 'price_per_night',
         'rating': '-rating',
     }
+    if sort_by in ordering_options:
+        locations = locations.order_by(ordering_options[sort_by])
 
+    # Фільтрування за пошуковим запитом
+    if query:
+        locations = locations.filter(name__icontains=query)
+
+    # Фільтрування за датами
+    if start_date and end_date:
+        start_dt = make_aware(datetime.strptime(start_date, '%Y-%m-%d'))
+        end_dt = make_aware(datetime.strptime(end_date, '%Y-%m-%d'))
+        booked_location_ids = Booking.objects.filter(
+            confirmed=True, start_time__lt=end_dt, end_time__gt=start_dt
+        ).values_list('location_id', flat=True)
+        locations = locations.exclude(id__in=booked_location_ids)
+
+    # Ульблені локації
     favourites = []
     if request.user.is_authenticated:
         favourites = Location.objects.filter(
@@ -80,11 +61,8 @@ def index(request: HttpRequest) -> HttpResponse:
             )
         )
 
-    if sort_by in ordering_options:
-        locations = locations.order_by(ordering_options[sort_by])
-
     booked_location_ids = Booking.objects.filter(
-        Q(start_time__lte=now(), end_time__gte=now())
+        start_time__lte=now(), end_time__gte=now()
     ).values_list('location_id', flat=True)
 
     return render(
@@ -103,14 +81,23 @@ def index(request: HttpRequest) -> HttpResponse:
 
 
 def location_detail(request: HttpRequest, pk: int) -> HttpResponse:
+    """
+    Відображає деталі локації та список відгуків.
+
+    Args:
+        request (HttpRequest): Запит.
+        pk (int): Ідентифікатор локації.
+
+    Returns:
+        HttpResponse: Відповідь сервера з деталями локації.
+    """
     location = get_object_or_404(Location, pk=pk)
     reviews = location.reviews.all()
-    user_review = None
-
-    if request.user.is_authenticated:
-        user_review = Review.objects.filter(
-            user=request.user, location=location
-        ).first()
+    user_review = (
+        Review.objects.filter(user=request.user, location=location).first()
+        if request.user.is_authenticated
+        else None
+    )
 
     if request.method == 'POST' and not user_review:
         review_form = ReviewForm(request.POST)
@@ -135,78 +122,158 @@ def location_detail(request: HttpRequest, pk: int) -> HttpResponse:
     )
 
 
-@login_required()
+def send_activation_email(request: HttpRequest, booking: Booking) -> None:
+    subject = f'Підтведіть бронювання: {booking.location.name}'
+    base_url = f'{request.scheme}://{request.get_host()}'
+    activation_link = f'{base_url}/activate/{booking.activation_code}/'
+
+    message = f"""
+    <html lang="uk">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>{subject}</title>
+        </head>
+        <body style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px; text-align: center;">
+            <div style="max-width: 500px; margin: auto; background-color: #ffffff; padding: 25px; border-radius: 10px; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);">
+                <h2 style="color: #333; margin-bottom: 20px;">Підтвердження бронювання</h2>
+                <p style="color: #555; line-height: 1.5;">Вітаємо, {booking.user}, дякуємо за ваше бронювання <strong>{booking.location.name}</strong>!</p>
+                <p style="color: #555; line-height: 1.5;">Для його підтвердження, будь ласка, натисніть кнопку нижче:</p>
+                <p style="margin: 20px 0;">
+                    <a href="{activation_link}" style="display: inline-block; padding: 12px 24px; background-color: #28a745; color: #ffffff; text-decoration: none; font-size: 16px; font-weight: bold; border-radius: 5px;">Підтвердити бронювання</a>
+                </p>
+                <p style="color: #555; line-height: 1.5;">Ваше бронювання з <strong>{booking.start_time.strftime('%d.%m.%Y')}</strong> по <strong>{booking.end_time.strftime('%d.%m.%Y')}</strong>.</p>
+                <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
+                <p style="font-size: 12px; color: #777; line-height: 1.5;">Якщо ви не здійснювали це бронювання - проігноруйте цей лист.</p>
+            </div>
+        </body>
+    </html>
+    """
+
+    send_mail(
+        subject,
+        '',
+        settings.EMAIL_HOST_USER,
+        [booking.user.email],
+        html_message=message,
+    )
+
+
+def activate_booking(request: HttpRequest, code: int) -> HttpResponse:
+    """
+    Активує бронювання за кодом активації.
+
+    Args:
+        request (HttpRequest): Запит.
+        code (int): Код активації.
+
+    Returns:
+        HttpResponse: Відповідь сервера.
+    """
+    booking = get_object_or_404(Booking, activation_code=code)
+    booking.confirmed = True
+    booking.save()
+
+    return render(request, 'activation_page.html', {'booking': booking.id})
+
+
+@login_required
 def create_booking(request: HttpRequest, pk: int) -> HttpResponse:
-    location = get_object_or_404(Location, id=pk)
+    """
+    Створює бронювання для локації.
 
-    if request.method == 'POST':
-        form = BookingForm(request.POST)
-        if form.is_valid():
-            booking = form.save(commit=False)
-            booking.user = request.user
-            booking.location = location
-            booking.confirmed = False
+    Args:
+        request (HttpRequest): Запит.
+        pk (int): Ідентифікатор локації.
 
-            overlapping_bookings = Booking.objects.filter(
-                location=location, confirmed=True
-            ).filter(
-                Q(start_time__lt=booking.end_time, end_time__gt=booking.start_time)
+    Returns:
+        HttpResponse: Відповідь сервера з формою бронювання.
+    """
+    location = get_object_or_404(Location, pk=pk)
+    form = BookingForm(request.POST or None, initial={'start_time': now()})
+
+    if request.method == 'POST' and form.is_valid():
+        booking = form.save(commit=False)
+        booking.user = request.user
+        booking.location = location
+        booking.confirmed = False
+
+        if Booking.objects.filter(
+            location=location,
+            confirmed=True,
+            start_time__lt=booking.end_time,
+            end_time__gt=booking.start_time,
+        ).exists():
+            form.add_error(
+                None, 'Цей час уже зайнятий. Будь ласка, оберіть інший період.'
             )
-            if overlapping_bookings.exists():
-                form.add_error(
-                    None, 'Цей час уже зайнятий. Будь ласка, оберіть інший період.'
-                )
-                return render(
-                    request, 'booking_form.html', {'form': form, 'location': location}
-                )
-
+        else:
             send_activation_email(request, booking)
             booking.save()
             return redirect('booking:index')
-    else:
-        form = BookingForm(initial={'start_time': now()})
 
     return render(request, 'booking_form.html', {'form': form, 'location': location})
 
 
+# TODO: Виправити IntegrityError
 @login_required
 def like_location(request: HttpRequest, location_id: int) -> HttpResponse:
-    location = get_object_or_404(Location, id=location_id)
+    """
+    Обробляє лайк користувача для локації.
+
+    Args:
+        request (HttpRequest): Запит.
+        location_id (int): Ідентифікатор локації.
+
+    Returns:
+        HttpResponse: Відповідь сервера.
+    """
+    location = get_object_or_404(Location, pk=location_id)
     like, created = Like.objects.get_or_create(user=request.user, location=location)
 
     if created:
-        Location.objects.filter(id=location.id).update(like_count=F('like_count') + 1)
+        Location.objects.filter(pk=location.id).update(like_count=F('like_count') + 1)
         if Dislike.objects.filter(user=request.user, location=location).exists():
             Dislike.objects.filter(user=request.user, location=location).delete()
-            Location.objects.filter(id=location.id).update(
+            Location.objects.filter(pk=location.id).update(
                 dislike_count=F('dislike_count') - 1
             )
     else:
         like.delete()
-        Location.objects.filter(id=location.id).update(like_count=F('like_count') - 1)
+        Location.objects.filter(pk=location.id).update(like_count=F('like_count') - 1)
 
     return redirect('booking:location_detail', pk=location_id)
 
 
 @login_required
 def dislike_location(request: HttpRequest, location_id: int) -> HttpResponse:
-    location = get_object_or_404(Location, id=location_id)
+    """
+    Обробляє дизлайк користувача для локації.
+
+    Args:
+        request (HttpRequest): Запит.
+        location_id (int): Ідентифікатор локації.
+
+    Returns:
+        HttpResponse: Відповідь сервера.
+    """
+    location = get_object_or_404(Location, pk=location_id)
     dislike, created = Dislike.objects.get_or_create(
         user=request.user, location=location
     )
 
     if created:
-        Location.objects.filter(id=location.id).update(
+        Location.objects.filter(pk=location.id).update(
             dislike_count=F('dislike_count') + 1
         )
         if Like.objects.filter(user=request.user, location=location).exists():
             Like.objects.filter(user=request.user, location=location).delete()
-            Location.objects.filter(id=location.id).update(
+            Location.objects.filter(pk=location.id).update(
                 like_count=F('like_count') - 1
             )
     else:
         dislike.delete()
-        Location.objects.filter(id=location.id).update(
+        Location.objects.filter(pk=location.id).update(
             dislike_count=F('dislike_count') - 1
         )
 
@@ -215,24 +282,22 @@ def dislike_location(request: HttpRequest, location_id: int) -> HttpResponse:
 
 @login_required
 def favourite_location(request: HttpRequest, location_id: int) -> HttpResponse:
-    location = get_object_or_404(Location, id=location_id)
+    """
+    Обробляє додавання до улюблених локацій.
+
+    Args:
+        request (HttpRequest): Запит.
+        location_id (int): Ідентифікатор локації.
+
+    Returns:
+        HttpResponse: Відповідь сервера.
+    """
+    location = get_object_or_404(Location, pk=location_id)
     favourite, created = Favourite.objects.get_or_create(
         user=request.user, location=location
     )
 
-    if created:
-        location.is_favourited = False
-    else:
+    if not created:
         favourite.delete()
-        location.is_favourited = True
 
-    location.save()
     return redirect('booking:location_detail', pk=location_id)
-
-
-def activate_post(request: HttpRequest, code: int) -> HttpResponse:
-    booking = get_object_or_404(Booking, activation_code=code)
-    booking.confirmed = True
-    booking.save()
-
-    return render(request, 'activation_page.html', {'booking': booking.id})
