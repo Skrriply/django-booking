@@ -5,6 +5,8 @@ from .models import Advertisement, Booking, Location, Review
 
 @admin.register(Location)
 class LocationAdmin(admin.ModelAdmin):
+    """Адміністраторський клас для локацій."""
+
     list_display = [
         'name',
         'amount',
@@ -19,6 +21,8 @@ class LocationAdmin(admin.ModelAdmin):
 
 @admin.register(Booking)
 class BookingAdmin(admin.ModelAdmin):
+    """Адміністраторський клас для бронювань."""
+
     list_display = ['user', 'location', 'start_time', 'end_time', 'confirmed']
     list_filter = ['confirmed', 'location']
     search_fields = ['user__username', 'location__name']
@@ -27,6 +31,8 @@ class BookingAdmin(admin.ModelAdmin):
 
 @admin.register(Review)
 class ReviewAdmin(admin.ModelAdmin):
+    """Адміністраторський клас для відгуків."""
+
     list_display = ['user', 'location', 'rating', 'created_at']
     list_filter = ['rating']
     search_fields = ['user__username', 'location__name']
@@ -35,6 +41,8 @@ class ReviewAdmin(admin.ModelAdmin):
 
 @admin.register(Advertisement)
 class AdvertisementAdmin(admin.ModelAdmin):
+    """Адміністраторський клас для реклами."""
+
     list_display = ('title', 'is_active', 'created_at')
     list_filter = ('is_active',)
     search_fields = ('title', 'description')
