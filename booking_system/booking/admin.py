@@ -32,6 +32,7 @@ class ReviewAdmin(admin.ModelAdmin):
     search_fields = ['user__username', 'location__name']
     ordering = ['-created_at']
 
+
 @admin.register(Advertisement)
 class AdvertisementAdmin(admin.ModelAdmin):
     list_display = ('title', 'is_active', 'created_at')

@@ -1,10 +1,15 @@
 import random
+from typing import Dict
+
+from django.http import HttpRequest
+
 from .models import Advertisement
 
-def advertisement_processor(request):
+
+def advertisement_processor(request: HttpRequest) -> Dict[str, Advertisement]:
     if request.user.is_staff:
         return {}
-    
+
     ads = list(Advertisement.objects.filter(is_active=True))
     left_advertisement = None
     right_advertisement = None
