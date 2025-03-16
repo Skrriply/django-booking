@@ -215,6 +215,25 @@ def create_booking(request: HttpRequest, pk: int) -> HttpResponse:
     return render(request, 'booking_form.html', {'form': form, 'location': location})
 
 
+@login_required
+def delete_review(request: HttpRequest, review_id: int) -> HttpResponse:
+    """
+    Видаляє відгук користувача.
+
+    Args:
+        request (HttpRequest): Запит.
+        review_id (int): Ідентифікатор відгуку.
+
+    Returns:
+        HttpResponse: Відповідь сервера.
+    """
+    review = get_object_or_404(Review, pk=review_id, user=request.user)
+    location_id = review.location.id
+    review.delete()
+
+    return redirect('booking:location_detail', pk=location_id)
+
+
 # TODO: Виправити IntegrityError
 @login_required
 def like_location(request: HttpRequest, location_id: int) -> HttpResponse:

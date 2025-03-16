@@ -16,4 +16,5 @@ urlpatterns = [
         views.favourite_location,
         name='favourite_location',
     ),
+    path('review/<int:review_id>/delete/', views.delete_review, name='delete_review'),
 ]
