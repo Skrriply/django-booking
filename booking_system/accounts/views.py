@@ -1,5 +1,3 @@
-from typing import Union
-
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -21,7 +19,7 @@ def login_view(request: HttpRequest) -> HttpResponse:
         if user:
             login(request, user)
             return redirect('booking:index')
-        messages.error(request, 'Invalid username or password.')
+        messages.error(request, "Неправильне ім'я користувача або пароль.")
 
     return render(request, 'accounts/login_page.html', {'form': form})
 

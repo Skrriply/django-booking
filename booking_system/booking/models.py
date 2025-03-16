@@ -145,6 +145,7 @@ class Review(models.Model):
         ordering = ['-created_at']
 
 
+# TODO: Переписати реакції
 class Reaction(models.Model):
     """Реакція користувача на локацію (лайк та дизлайк)."""
 
@@ -162,6 +163,18 @@ class Reaction(models.Model):
         verbose_name = 'Reaction'
         verbose_name_plural = 'Reactions'
         unique_together = ('user', 'location')
+
+
+class Like(Reaction):
+    """Лайк."""
+
+    pass
+
+
+class Dislike(Reaction):
+    """Дизлайк."""
+
+    pass
 
 
 class Favourite(models.Model):
