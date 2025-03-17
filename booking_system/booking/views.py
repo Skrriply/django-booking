@@ -52,14 +52,12 @@ def index(request: HttpRequest) -> HttpResponse:
         ).values_list('location_id', flat=True)
         locations = locations.exclude(id__in=booked_location_ids)
 
-    # Ульблені локації
-    favourites = []
-    if request.user.is_authenticated:
-        favourites = Location.objects.filter(
-            id__in=Favourite.objects.filter(user=request.user).values_list(
-                'location_id', flat=True
-            )
-        )
+    # Улюблені локації
+    favourites = (
+        Location.objects.filter(favourites__user=request.user)
+        if request.user.is_authenticated
+        else None
+    )
 
     booked_location_ids = Booking.objects.filter(
         start_time__lte=now(), end_time__gte=now()
@@ -99,13 +97,12 @@ def location_detail(request: HttpRequest, pk: int) -> HttpResponse:
         else None
     )
 
-    favourites = []
-    if request.user.is_authenticated:
-        favourites = Location.objects.filter(
-            id__in=Favourite.objects.filter(user=request.user).values_list(
-                'location_id', flat=True
-            )
-        )
+    # Улюблені локації
+    favourites = (
+        Location.objects.filter(favourites__user=request.user)
+        if request.user.is_authenticated
+        else None
+    )
 
     if request.method == 'POST' and not user_review:
         review_form = ReviewForm(request.POST)
