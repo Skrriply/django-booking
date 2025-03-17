@@ -21,24 +21,22 @@
           <p>Доступно місць: {{ location.amount }}</p>
 
           <div class="d-flex">
-            <form method="POST" action="{% url 'booking:like_location' location.id %}" class="me-2">
+            <form method="POST" action="{% url 'booking:like_location' location.pk %}" class="me-2">
               {% csrf_token %}
               <button type="submit" class="btn btn-outline-primary">👍 Лайк ({{ location.like_count }})</button>
             </form>
-            <form method="POST" action="{% url 'booking:dislike_location' location.id %}" class="me-2">
+            <form method="POST" action="{% url 'booking:dislike_location' location.pk %}" class="me-2">
               {% csrf_token %}
               <button type="submit" class="btn btn-outline-danger">👎 Дизлайк ({{ location.dislike_count }})</button>
             </form>
-            <form method="POST" action="{% url 'booking:favourite_location' location.id %}">
+            <form method="POST" action="{% url 'booking:favourite_location' location.pk %}">
               {% csrf_token %}
-              <button type="submit" class="btn btn-outline-danger">
-                {% if location.is_favourite %}
-                    ❤️ Прибрати з улюблених
-                {% else %}
-                    🤍 Додати до улюблених
-                {% endif %}
-              </button>
-            </form>
+              {% if location in favourites %}
+              <button type="submit" class="btn btn-outline-danger">❤️ Прибрати з улюблених</button>
+              {% else %}
+              <button type="submit" class="btn btn-outline-danger">🤍 Додати до улюблених</button>
+              {% endif %}
+          </form>
           </div>
 
           {% if request.user.is_authenticated and not user_review %}
@@ -79,7 +77,7 @@
           <p class="card-text">{{ review.comment }}</p>
           <p class="card-text"><small class="text-muted">Рейтинг: {{ review.rating }}</small></p>
           {% if review.user == request.user or request.user.is_staff %}
-            <a href="{% url 'booking:delete_review' review.id %}" class="btn btn-danger btn-sm">Видалити</a>
+            <a href="{% url 'booking:delete_review' review.pk %}" class="btn btn-danger btn-sm">Видалити</a>
           {% endif %}
         </div>
       </div>

@@ -99,6 +99,14 @@ def location_detail(request: HttpRequest, pk: int) -> HttpResponse:
         else None
     )
 
+    favourites = []
+    if request.user.is_authenticated:
+        favourites = Location.objects.filter(
+            id__in=Favourite.objects.filter(user=request.user).values_list(
+                'location_id', flat=True
+            )
+        )
+
     if request.method == 'POST' and not user_review:
         review_form = ReviewForm(request.POST)
         if review_form.is_valid():
@@ -118,6 +126,7 @@ def location_detail(request: HttpRequest, pk: int) -> HttpResponse:
             'reviews': reviews,
             'review_form': review_form,
             'user_review': user_review,
+            'favourites': favourites,
         },
     )
 
@@ -232,6 +241,7 @@ def delete_review(request: HttpRequest, review_id: int) -> HttpResponse:
     if review.user == request.user or request.user.is_staff:
         location_id = review.location.id
         review.delete()
+        review.location.update_rating()
         return redirect('booking:location_detail', pk=location_id)
 
     return HttpResponse(status=403)
