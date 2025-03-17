@@ -1,0 +1,20 @@
+.ad-banner {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 200px;
+    z-index: 1000;
+}
+
+#left-ad {
+    left: 0;
+}
+
+#right-ad {
+    right: 0;
+}
+
+.ad-banner-img {
+    max-width: 100%;
+    height: auto;
+}

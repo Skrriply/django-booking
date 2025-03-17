@@ -6,24 +6,23 @@
 {% endblock %}
 
 {% block content %}
-
 <div class="container">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 
-    <h1>Знайдіть та забронюйте потрібну вам локацію</h1>
+    <h1 class="my-4">Знайдіть та забронюйте потрібну вам локацію</h1>
 
     <!-- Пошук -->
-    <div class="mb-3">
-        <form method="get" class="d-flex">
-            <input class="form-control me-2" type="search" placeholder="Пошук" aria-label="Пошук" name="q" value="{{ query }}">
+    <form method="get" class="mb-3">
+        <div class="input-group">
+            <input class="form-control" type="search" placeholder="Пошук" aria-label="Пошук" name="q" value="{{ query }}">
             <button class="btn btn-outline-success" type="submit">Пошук</button>
-        </form>
-    </div>
+        </div>
+    </form>
 
     <!-- Сортування -->
-    <div class="mb-3">
-        <label for="sort_by" class="form-label">Сортувати за:</label>
-        <form method="get">
+    <form method="get" class="mb-3">
+        <div class="input-group">
+            <label class="input-group-text" for="sort_by">Сортувати за:</label>
             <select class="form-select" id="sort_by" name="sort_by" onchange="this.form.submit()">
                 <option value="name" {% if sort_by == 'name' %}selected{% endif %}>Назвою</option>
                 <option value="price" {% if sort_by == 'price' %}selected{% endif %}>Ціною</option>
@@ -32,118 +31,82 @@
             {% if query %}
             <input type="hidden" name="q" value="{{ query }}">
             {% endif %}
-        </form>
-    </div>
-    <!-- Перегляд за часом -->
-    <div class="mb-3">
-        <form method="get" class="d-flex">
-            <input type="date" class="form-control me-2" name="start_date" value="{{ request.GET.start_date }}">
-            <input type="date" class="form-control me-2" name="end_date" value="{{ request.GET.end_date }}">
+        </div>
+    </form>
+
+    <!-- Фільтрування за часом -->
+    <form method="get" class="mb-3">
+        <div class="input-group">
+            <input type="date" class="form-control" name="start_date" value="{{ request.GET.start_date }}">
+            <input type="date" class="form-control" name="end_date" value="{{ request.GET.end_date }}">
             <button class="btn btn-outline-success" type="submit">Пошук</button>
-        </form>
-    </div>
-    
-<!-- Favourited locations -->
-<h1>Всі збереженні локації | Підказка: нажми на серце щоб зберегти</h1> 
+        </div>
+    </form>
 
-<div class="row row-cols-1 row-cols-md-3 g-4">
-    
+    <!-- Улюблені локації -->
     {% for location in favourites %}
-    <div class="col">
-        <div class="card h-100">
-            <img
-                src="{{ location.photo }}"
-                class="card-img-top"
-                alt="{{ location.name }}"
-                style="height: 200px; object-fit: cover;"
-            />
-            <div class="card-body">
-                <h5 class="card-title">
-                    <a href="{% url 'booking:location_detail' location.id %}" class="text-decoration-none">
-                        {{ location.name }}
-                    </a>
-                </h5>
-                <p class="card-text">{{ location.city }}, {{ location.country }}</p>
-                <p class="card-text">{{ location.price_per_night }} грн / ніч</p>
-
-                <!-- Availability Badge -->
-                {% if location.is_booked %}
-                    <span class="badge bg-danger">Станом на зараз заброньовано</span>
-                {% else %}
-                    <span class="badge bg-success">Станом на зараз доступно</span>
-                {% endif %}
-
-                <!-- Buttons -->
-                <div class="mt-2">
-                    <a href="{% url 'booking:location_detail' location.id %}" class="btn btn-outline-primary">Переглянути</a>
-                    <a href="{% url 'booking:create_booking' location.pk %}" class="btn btn-primary">Забронювати</a>
-                    {{ location.like_count }} <i class="fa-regular fa-thumbs-up"></i> {{ location.dislike_count }} <i class="fa-regular fa-thumbs-down"></i> {% if location in favourites %}
-                    <i class="fa-solid fa-heart"></i>
-                {% else %}
-                    <i class="fa-regular fa-heart"></i>
-                {% endif %}
-                
+    <h2 class="my-4">Всі збереженні локації</h2>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        <div class="col">
+            <div class="card h-100">
+                <img src="{{ location.photo }}" class="card-img-top" alt="{{ location.name }}" style="height: 200px; object-fit: cover;">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <a href="{% url 'booking:location_detail' location.id %}" class="text-decoration-none">{{ location.name }}</a>
+                    </h5>
+                    <p class="card-text">{{ location.city }}, {{ location.country }}</p>
+                    <p class="card-text">{{ location.price_per_night }} грн / ніч</p>
+                    <span class="badge {% if location.is_booked %}bg-danger{% else %}bg-success{% endif %}">{{ location.is_booked|yesno:"Станом на зараз заброньовано,Станом на зараз доступно" }}</span>
+                    <div class="mt-2">
+                        <a href="{% url 'booking:location_detail' location.id %}" class="btn btn-outline-primary">Переглянути</a>
+                        <a href="{% url 'booking:create_booking' location.pk %}" class="btn btn-primary">Забронювати</a>
+                        {{ location.like_count }} <i class="fa-regular fa-thumbs-up"></i> {{ location.dislike_count }} <i class="fa-regular fa-thumbs-down"></i>
+                        <i class="{% if location in favourites %}fa-solid{% else %}fa-regular{% endif %} fa-heart"></i>
+                    </div>
                 </div>
             </div>
         </div>
+        {% endfor %}
     </div>
-    {% empty %}
-    <p>Нічого не знайдено.</p>
-    {% endfor %}
-</div>
-<!-- Локації -->
-<h1>Усі відсортовані локації</h1>
-<div class="row row-cols-1 row-cols-md-3 g-4">
-    
-    {% for location in locations %}
-    <div class="col">
-        <div class="card h-100">
-            <img
-                src="{{ location.photo }}"
-                class="card-img-top"
-                alt="{{ location.name }}"
-                style="height: 200px; object-fit: cover;"
-            />
-            <div class="card-body">
-                <h5 class="card-title">
-                    <a href="{% url 'booking:location_detail' location.id %}" class="text-decoration-none">
-                        {{ location.name }}
-                    </a>
-                </h5>
-                <p class="card-text">{{ location.city }}, {{ location.country }}</p>
-                <p class="card-text">{{ location.price_per_night }} грн / ніч</p>
 
-                <!-- Availability Badge -->
-                {% if location.is_booked %}
-                    <span class="badge bg-danger">Станом на зараз заброньовано</span>
-                {% else %}
-                    <span class="badge bg-success">Станом на зараз доступно</span>
-                {% endif %}
-
-                <!-- Buttons -->
-                <div class="mt-2">
-                    <a href="{% url 'booking:location_detail' location.id %}" class="btn btn-outline-primary">Переглянути</a>
-                    <a href="{% url 'booking:create_booking' location.pk %}" class="btn btn-primary">Забронювати</a>
-                    {{ location.like_count }} <i class="fa-regular fa-thumbs-up"></i> {{ location.dislike_count }} <i class="fa-regular fa-thumbs-down"></i> {% if location in favourites %}
-                    <i class="fa-solid fa-heart"></i>
-                {% else %}
-                    <i class="fa-regular fa-heart"></i>
-                {% endif %}                    
+    <!-- Локації -->
+    <h2 class="my-4">Усі локації</h2>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for location in locations %}
+        <div class="col">
+            <div class="card h-100">
+                <img src="{{ location.photo }}" class="card-img-top" alt="{{ location.name }}" style="height: 200px; object-fit: cover;">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <a href="{% url 'booking:location_detail' location.id %}" class="text-decoration-none">{{ location.name }}</a>
+                    </h5>
+                    <p class="card-text">{{ location.city }}, {{ location.country }}</p>
+                    <p class="card-text">{{ location.price_per_night }} грн / ніч</p>
+                    <span class="badge {% if location.is_booked %}bg-danger{% else %}bg-success{% endif %}">{{ location.is_booked|yesno:"Станом на зараз заброньовано,Станом на зараз доступно" }}</span>
+                    <div class="mt-2">
+                        <a href="{% url 'booking:location_detail' location.id %}" class="btn btn-outline-primary">Переглянути</a>
+                        <a href="{% url 'booking:create_booking' location.pk %}" class="btn btn-primary">Забронювати</a>
+                        <span>{{ location.like_count }} <i class="fa-regular fa-thumbs-up"></i></span>
+                        <span>{{ location.dislike_count }} <i class="fa-regular fa-thumbs-down"></i></span>
+                        {% if location in favourites %}
+                        <i class="fa-solid fa-heart"></i>
+                        {% else %}
+                        <i class="fa-regular fa-heart"></i>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
+        {% empty %}
+        <p>Нічого не знайдено.</p>
+        {% endfor %}
     </div>
-    {% empty %}
-    <p>Нічого не знайдено.</p>
-    {% endfor %}
-</div>
 </div>
 
-<!-- Кнопка -->
-<div class="modal-footer">
-    <button type="button" class="btn btn-primary rounded-circle p-3" id="hoverButton" style="width: 60px; height: 60px;" data-bs-dismiss="modal">
-        <i class="fa-solid fa-phone-volume"></i></button>
-</div>
+<!-- Кнопка "Контакти" -->
+<button type="button" class="btn btn-primary rounded-circle p-3 position-fixed" id="hoverButton" style="width: 60px; height: 60px; bottom: 20px; right: 20px;">
+    <i class="fa-solid fa-phone-volume"></i>
+</button>
 
 <!-- Модальне вікно -->
 <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -164,10 +127,5 @@
 </div>
 
 <!-- Скрипт для відкриття модального вікна при наведенні -->
-<script>
-    document.getElementById("hoverButton").addEventListener("mouseenter", function() {
-        var myModal = new bootstrap.Modal(document.getElementById('myModal'));
-        myModal.show();
-    });
-</script>
+<script src="{% static 'js/open_modal.js' %}"></script>
 {% endblock %}

@@ -7,8 +7,9 @@
 
 {% block content %}
 <div class="container">
+  <!-- Докладна інформація про локацію -->
   <div class="row">
-    <div class="col-md-8 order-md-first">
+    <div class="col-md-8">
       <div class="card mb-3">
         <img src="{{ location.photo }}" alt="{{ location.name }}" class="img-fluid card-img-top" style="max-height: 500px; object-fit: cover" />
         <div class="card-body">
@@ -20,63 +21,65 @@
           <p>Доступно місць: {{ location.amount }}</p>
 
           <div class="d-flex">
-            <form method="post" action="{% url 'booking:like_location' location.id %}">
+            <form method="POST" action="{% url 'booking:like_location' location.id %}" class="me-2">
               {% csrf_token %}
-              <button type="submit" class="btn btn-outline-primary me-2">👍 Лайк ({{ location.like_count }})</button>
+              <button type="submit" class="btn btn-outline-primary">👍 Лайк ({{ location.like_count }})</button>
             </form>
-            <form method="post" action="{% url 'booking:dislike_location' location.id %}">
+            <form method="POST" action="{% url 'booking:dislike_location' location.id %}" class="me-2">
               {% csrf_token %}
-              <button type="submit" class="btn btn-outline-danger me-2">👎 Дізлайк ({{ location.dislike_count }})</button>
+              <button type="submit" class="btn btn-outline-danger">👎 Дизлайк ({{ location.dislike_count }})</button>
             </form>
-            <form method="post" action="{% url 'booking:favourite_location' location.id %}">
+            <form method="POST" action="{% url 'booking:favourite_location' location.id %}">
               {% csrf_token %}
               <button type="submit" class="btn btn-outline-danger">
                 {% if location.is_favourite %}
-                    ❤️ Улюблене
+                    ❤️ Прибрати з улюблених
                 {% else %}
-                    🤍 Додати в улюблене
+                    🤍 Додати до улюблених
                 {% endif %}
               </button>
             </form>
           </div>
 
           {% if request.user.is_authenticated and not user_review %}
+            </br>
             <h3>Залишити відгук</h3>
-            <form method="post">
+            <form method="POST">
               {% csrf_token %}
               {{ review_form|crispy }}
-              <button type="submit" class="btn btn-primary">Відправити</button>
+              <button type="submit" class="btn btn-primary">Опублікувати</button>
             </form>
           {% endif %}
         </div>
       </div>
     </div>
 
+    <!-- Кнопка "Забронювати" -->
     <div class="col-md-4">
       <div class="card">
         <div class="card-body">
-          <h5 class="card-title">Забронювати зараз</h5>
-          <form method="post" action="{% url 'booking:create_booking' location.pk %}">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="btn btn-success w-100">Забронювати</button>
-          </form>
+          <h5 class="card-title">Забронюйте вже зараз!</h5>
+          <a href="{% url 'booking:create_booking' location.pk %}" class="btn btn-success w-100">Забронювати</a>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- Відгуки -->
   <div class="mt-5">
     <h3>Відгуки</h3>
     {% for review in reviews %}
       <div class="card mb-3">
         <div class="card-body">
-          <h5 class="card-title">{{ review.user.username }}</h5>
+          {% if review.user.first_name and review.user.last_name %}
+          <h5 class="card-title">{{ review.user.first_name }} {{ review.user.last_name }}</h5>
+          {% else %}
+          <h5 class="card-title">{{ review.user.username}}</h5>
+          {% endif %}
           <p class="card-text">{{ review.comment }}</p>
           <p class="card-text"><small class="text-muted">Рейтинг: {{ review.rating }}</small></p>
           {% if review.user == request.user or request.user.is_staff %}
-          {% csrf_token %}
-          <a href="{% url 'booking:delete_review' review.id %}">Видалити</a>
+            <a href="{% url 'booking:delete_review' review.id %}" class="btn btn-danger btn-sm">Видалити</a>
           {% endif %}
         </div>
       </div>
@@ -85,6 +88,7 @@
     {% endfor %}
   </div>
 
+  <!-- Кнопка "Назад до списку" -->
   <a href="{% url 'booking:index' %}" class="btn btn-secondary mt-3">Назад до списку</a>
 </div>
 {% endblock %}
