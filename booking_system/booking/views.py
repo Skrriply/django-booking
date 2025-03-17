@@ -9,7 +9,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.timezone import make_aware, now
 
 from .forms import BookingForm, ReviewForm
-from .models import Booking, Dislike, Favourite, Like, Location, Review
+from .models import Booking, Favourite, Location, Review, Reaction
 
 
 def index(request: HttpRequest) -> HttpResponse:
@@ -258,18 +258,20 @@ def like_location(request: HttpRequest, location_id: int) -> HttpResponse:
         HttpResponse: Відповідь сервера.
     """
     location = get_object_or_404(Location, pk=location_id)
-    like, created = Like.objects.get_or_create(user=request.user, location=location)
+    like, created = Reaction.objects.get_or_create(
+        user=request.user, location=location, reaction_type='like'
+    )
 
-    if created:
-        Location.objects.filter(pk=location.id).update(like_count=F('like_count') + 1)
-        if Dislike.objects.filter(user=request.user, location=location).exists():
-            Dislike.objects.filter(user=request.user, location=location).delete()
-            Location.objects.filter(pk=location.id).update(
-                dislike_count=F('dislike_count') - 1
-            )
-    else:
+    if not created:  # Видаляє лайк, якщо він вже існує
         like.delete()
-        Location.objects.filter(pk=location.id).update(like_count=F('like_count') - 1)
+    else:  # Видаляє дизлайк, якщо він вже існує
+        Reaction.objects.filter(
+            user=request.user, location=location, reaction_type='dislike'
+        ).delete()
+
+    # Оновлює кількість лайків та дизлайків
+    location.update_like_count()
+    location.update_dislike_count()
 
     return redirect('booking:location_detail', pk=location_id)
 
@@ -287,24 +289,20 @@ def dislike_location(request: HttpRequest, location_id: int) -> HttpResponse:
         HttpResponse: Відповідь сервера.
     """
     location = get_object_or_404(Location, pk=location_id)
-    dislike, created = Dislike.objects.get_or_create(
-        user=request.user, location=location
+    dislike, created = Reaction.objects.get_or_create(
+        user=request.user, location=location, reaction_type='dislike'
     )
 
-    if created:
-        Location.objects.filter(pk=location.id).update(
-            dislike_count=F('dislike_count') + 1
-        )
-        if Like.objects.filter(user=request.user, location=location).exists():
-            Like.objects.filter(user=request.user, location=location).delete()
-            Location.objects.filter(pk=location.id).update(
-                like_count=F('like_count') - 1
-            )
-    else:
+    if not created:  # Видаляє дизлайк, якщо він вже існує
         dislike.delete()
-        Location.objects.filter(pk=location.id).update(
-            dislike_count=F('dislike_count') - 1
-        )
+    else:  # Видаляє лайк, якщо він вже існує
+        Reaction.objects.filter(
+            user=request.user, location=location, reaction_type='like'
+        ).delete()
+
+    # Оновлює кількість лайків та дизлайків
+    location.update_like_count()
+    location.update_dislike_count()
 
     return redirect('booking:location_detail', pk=location_id)
 

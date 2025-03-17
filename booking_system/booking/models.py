@@ -31,6 +31,16 @@ class Location(models.Model):
         self.rating = total_rating / reviews.count() if reviews.exists() else 0.0
         self.save()
 
+    def update_like_count(self) -> None:
+        """Оновлює кількість лайків для локації."""
+        self.like_count = Reaction.objects.filter(reaction_type='like').count()
+        self.save()
+
+    def update_dislike_count(self) -> None:
+        """Оновлює кількість дизлайків для локації."""
+        self.dislike_count = Reaction.objects.filter(reaction_type='dislike').count()
+        self.save()
+
     def is_booked(self) -> bool:
         """
         Перевіряє, чи заброньована локація в даний момент.
@@ -142,36 +152,29 @@ class Review(models.Model):
         ordering = ['-created_at']
 
 
-# TODO: Переписати реакції
 class Reaction(models.Model):
     """Реакція користувача на локацію (лайк та дизлайк)."""
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    location = models.ForeignKey(
-        Location, on_delete=models.CASCADE, related_name='likes'
+    REACTION_OPTIONS = (
+        ('like', 'Like'),
+        ('dislike', 'Dislike'),
     )
 
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    location = models.ForeignKey(
+        Location, on_delete=models.CASCADE, related_name='reactions'
+    )
+    reaction_type = models.CharField(max_length=7, choices=REACTION_OPTIONS)
+
     def __str__(self) -> str:
-        return f'{self.user} відреагував на {self.location}'
+        return f'{self.user} поставив {self.reaction_type} на {self.location}'
 
     class Meta:
         """Метаклас моделі, який визначає метадані моделі."""
 
         verbose_name = 'Reaction'
         verbose_name_plural = 'Reactions'
-        unique_together = ('user', 'location')
-
-
-class Like(Reaction):
-    """Лайк."""
-
-    pass
-
-
-class Dislike(Reaction):
-    """Дизлайк."""
-
-    pass
+        unique_together = ('user', 'location', 'reaction_type')
 
 
 class Favourite(models.Model):
