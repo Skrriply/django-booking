@@ -24,6 +24,8 @@
                   <li><a class="dropdown-item" href="{% url 'admin:index' %}">Адмін-панель</a></li>
                   {% endif %}
                   <li><a class="dropdown-item" href="{% url 'accounts:profile' %}">Мій профіль</a></li>
+                  <li><a class="dropdown-item" href="{% url 'accounts:profile_update' %}">Редагувати профіль</a></li>
+                  <li><a class="dropdown-item" href="{% url 'accounts:password_change' %}">Змінити пароль</a></li>
                   <li><a class="dropdown-item" href="{% url 'accounts:logout' %}">Вихід</a></li>
                 </ul>
               </li>
@@ -33,8 +35,8 @@
                   Акаунти
                 </a>
                 <ul class="dropdown-menu" aria-labelledby="accountsDropdown">
-                  <li><a class="dropdown-item" href="{% url 'accounts:register' %}">Реєстрація</a></li>
-                  <li><a class="dropdown-item" href="{% url 'accounts:login' %}">Логін</a></li>
+                  <li><a class="dropdown-item" href="{% url 'accounts:register' %}">Зареєструватися</a></li>
+                  <li><a class="dropdown-item" href="{% url 'accounts:login' %}">Увійти</a></li>
                 </ul>
               </li>
               {% endif %}

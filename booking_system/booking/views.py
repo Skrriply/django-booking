@@ -9,7 +9,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.timezone import make_aware, now
 
 from .forms import BookingForm, ReviewForm
-from .models import Booking, Favourite, Location, Review, Reaction
+from .models import Booking, Favourite, Location, Reaction, Review
 
 
 def index(request: HttpRequest) -> HttpResponse:
