@@ -16,7 +16,11 @@
           <h1 class="card-title">{{ location.name }}</h1>
           <p class="lead">{{ location.description }}</p>
           <p>Місцезнаходження: {{ location.city }}, {{ location.country }}</p>
+          {% if location.rating != 0 %}
           <p>Рейтинг: {{ location.rating }}</p>
+          {% else %}
+          <p>Рейтинг: Немає</p>
+          {% endif %}
           <p>Ціна за ніч: {{ location.price_per_night }} грн</p>
           <p>Доступно місць: {{ location.amount }}</p>
 
