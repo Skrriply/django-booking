@@ -1,0 +1,21 @@
+{% extends 'base/_base.html' %}
+{% load crispy_forms_filters %}
+
+{% block title %}
+Редагування профілю
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <h1>Редагування профілю</h1>
+
+    <!-- Форма редагування профілю -->
+    <form method="POST">
+      {% csrf_token %}
+      {{ profile_form|crispy }}
+      <button type="submit" class="btn btn-primary w-100">Оновити профіль</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,3 +1,5 @@
+from typing import Any, Dict
+
 from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.timezone import now
@@ -6,16 +8,27 @@ from .models import Booking, Review
 
 
 class BookingForm(forms.ModelForm):
+    """Форма для бронювання локації."""
+
     start_time = forms.DateTimeField(
         required=True,
         initial=now,
         widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+        label='Дата початку',
     )
     end_time = forms.DateTimeField(
-        required=True, widget=forms.DateTimeInput(attrs={'type': 'datetime-local'})
+        required=True,
+        widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+        label='Дата закінчення',
     )
 
-    def clean(self) -> dict:
+    def clean(self) -> Dict[str, Any]:
+        """
+        Перевіряє чи дата початку бронювання не пізніше дати закінчення.
+
+        Returns:
+            Dict[str, Any]: Очищені дані форми.
+        """
         cleaned_data = super().clean()
         start_time = cleaned_data.get('start_time')
         end_time = cleaned_data.get('end_time')
@@ -30,11 +43,20 @@ class BookingForm(forms.ModelForm):
         return cleaned_data
 
     class Meta:
+        """Метаклас форми, який визначає метадані форми."""
+
         model = Booking
         exclude = ['user', 'location', 'confirmed']
 
 
 class ReviewForm(forms.ModelForm):
+    """Форма для відгуку."""
+
+    rating = forms.IntegerField(label='Рейтинг', min_value=1, max_value=5)
+    comment = forms.CharField(widget=forms.Textarea, label='Коментар')
+
     class Meta:
+        """Метаклас форми, який визначає метадані форми."""
+
         model = Review
         fields = ['rating', 'comment']

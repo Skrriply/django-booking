@@ -42,6 +42,7 @@ python -m pip install -r requirements.txt
 ```bash
 python booking_system\manage.py makemigrations
 python booking_system\manage.py migrate
+python booking_system\manage.py createsuperuser
 python booking_system\manage.py runserver
 ```
 

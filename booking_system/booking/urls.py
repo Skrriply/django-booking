@@ -1,4 +1,3 @@
-from django.contrib import admin
 from django.urls import path
 
 from . import views
@@ -9,7 +8,7 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('location/<int:pk>/', views.location_detail, name='location_detail'),
     path('location/<int:pk>/book', views.create_booking, name='create_booking'),
-    path('activate/<uuid:code>/', views.activate_post, name='activation'),
+    path('activate/<uuid:code>/', views.activate_booking, name='activation'),
     path('like/<int:location_id>/', views.like_location, name='like_location'),
     path('dislike/<int:location_id>/', views.dislike_location, name='dislike_location'),
     path(
@@ -17,4 +16,5 @@ urlpatterns = [
         views.favourite_location,
         name='favourite_location',
     ),
+    path('review/<int:review_id>/delete/', views.delete_review, name='delete_review'),
 ]
