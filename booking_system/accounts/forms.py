@@ -8,8 +8,8 @@ User = get_user_model()
 class LoginForm(forms.Form):
     """Форма для входу в обліковий запис."""
 
-    username = forms.CharField(widget=forms.TextInput())
-    password = forms.CharField(widget=forms.PasswordInput())
+    username = forms.CharField(widget=forms.TextInput(), label="Ім'я користувача")
+    password = forms.CharField(widget=forms.PasswordInput(), label='Пароль')
 
 
 class RegisterForm(UserCreationForm):

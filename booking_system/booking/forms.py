@@ -14,9 +14,12 @@ class BookingForm(forms.ModelForm):
         required=True,
         initial=now,
         widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+        label='Дата початку',
     )
     end_time = forms.DateTimeField(
-        required=True, widget=forms.DateTimeInput(attrs={'type': 'datetime-local'})
+        required=True,
+        widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+        label='Дата закінчення',
     )
 
     def clean(self) -> Dict[str, Any]:
@@ -48,6 +51,9 @@ class BookingForm(forms.ModelForm):
 
 class ReviewForm(forms.ModelForm):
     """Форма для відгуку."""
+
+    rating = forms.IntegerField(label='Рейтинг', min_value=1, max_value=5)
+    comment = forms.CharField(widget=forms.Textarea, label='Коментар')
 
     class Meta:
         """Метаклас форми, який визначає метадані форми."""

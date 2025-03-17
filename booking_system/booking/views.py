@@ -227,11 +227,14 @@ def delete_review(request: HttpRequest, review_id: int) -> HttpResponse:
     Returns:
         HttpResponse: Відповідь сервера.
     """
-    review = get_object_or_404(Review, pk=review_id, user=request.user)
-    location_id = review.location.id
-    review.delete()
+    review = get_object_or_404(Review, pk=review_id)
 
-    return redirect('booking:location_detail', pk=location_id)
+    if review.user == request.user or request.user.is_staff:
+        location_id = review.location.id
+        review.delete()
+        return redirect('booking:location_detail', pk=location_id)
+
+    return HttpResponse(status=403)
 
 
 # TODO: Виправити IntegrityError
