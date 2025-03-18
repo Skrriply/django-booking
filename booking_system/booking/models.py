@@ -9,20 +9,29 @@ from django.utils.timezone import now
 class Location(models.Model):
     """Локація, яку можна забронювати."""
 
-    name = models.CharField(max_length=50)
-    country = models.CharField(max_length=50)
-    city = models.CharField(max_length=50)
-    region = models.CharField(max_length=50)
-    street = models.CharField(max_length=50)
-    rating = models.PositiveSmallIntegerField(
-        validators=[MinValueValidator(0), MaxValueValidator(5)], default=0
+    name = models.CharField('Назва локації', max_length=50)
+    country = models.CharField('Країна', max_length=50)
+    city = models.CharField('Місто', max_length=50)
+    region = models.CharField('Область', max_length=50)
+    street = models.CharField('Вулиця', max_length=50)
+    amount = models.PositiveIntegerField('Місткість локації')
+    description = models.TextField('Опис локації')
+    photo = models.URLField('Зображення')
+    price_per_night = models.DecimalField(
+        'Ціна за ніч', max_digits=10, decimal_places=2
     )
-    like_count = models.PositiveIntegerField(default=0)
-    dislike_count = models.PositiveIntegerField(default=0)
-    amount = models.PositiveIntegerField()
-    description = models.TextField()
-    photo = models.URLField()
-    price_per_night = models.DecimalField(max_digits=10, decimal_places=2)
+    rating = models.PositiveSmallIntegerField(
+        'Рейтинг',
+        validators=[MinValueValidator(0), MaxValueValidator(5)],
+        default=0,
+        editable=False,
+    )
+    like_count = models.PositiveIntegerField(
+        'Кількість лайків', default=0, editable=False
+    )
+    dislike_count = models.PositiveIntegerField(
+        'Кількість дизлайків', default=0, editable=False
+    )
 
     def update_rating(self) -> None:
         """Оновлює рейтинг локації на основі всіх відгуків."""
@@ -64,8 +73,8 @@ class Location(models.Model):
     class Meta:
         """Метаклас моделі, який визначає метадані моделі."""
 
-        verbose_name = 'Location'
-        verbose_name_plural = 'Locations'
+        verbose_name = 'Локація'
+        verbose_name_plural = 'Локації'
         ordering = ['amount']
 
 
@@ -76,10 +85,12 @@ class Booking(models.Model):
     location = models.ForeignKey(
         Location, related_name='bookings', on_delete=models.CASCADE
     )
-    start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
-    confirmed = models.BooleanField(default=False)
-    activation_code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    start_time = models.DateTimeField('Дата початку')
+    end_time = models.DateTimeField('Дата закінчення')
+    confirmed = models.BooleanField('Підтверджено', default=False)
+    activation_code = models.UUIDField(
+        'Код активації', default=uuid.uuid4, editable=False, unique=True
+    )
 
     def total_days(self) -> int:
         """
@@ -111,8 +122,8 @@ class Booking(models.Model):
     class Meta:
         """Метаклас моделі, який визначає метадані моделі."""
 
-        verbose_name = 'Booking'
-        verbose_name_plural = 'Bookings'
+        verbose_name = 'Бронювання'
+        verbose_name_plural = 'Бронювання'
         ordering = ['start_time']
 
 
@@ -124,10 +135,10 @@ class Review(models.Model):
         Location, on_delete=models.DO_NOTHING, related_name='reviews'
     )
     rating = models.PositiveSmallIntegerField(
-        validators=[MinValueValidator(1), MaxValueValidator(5)]
+        'Рейтинг для локації', validators=[MinValueValidator(1), MaxValueValidator(5)]
     )
-    comment = models.TextField(blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    comment = models.TextField('Відгук', blank=True)
+    created_at = models.DateTimeField('Дата створення', auto_now_add=True)
 
     def save(self, *args, **kwargs) -> None:
         """Зберігає відгук та оновлює рейтинг локації."""
@@ -146,8 +157,8 @@ class Review(models.Model):
     class Meta:
         """Метаклас моделі, який визначає метадані моделі."""
 
-        verbose_name = 'Review'
-        verbose_name_plural = 'Reviews'
+        verbose_name = 'Відгук'
+        verbose_name_plural = 'Відгуки'
         unique_together = ('user', 'location')
         ordering = ['-created_at']
 
@@ -164,7 +175,9 @@ class Reaction(models.Model):
     location = models.ForeignKey(
         Location, on_delete=models.CASCADE, related_name='reactions'
     )
-    reaction_type = models.CharField(max_length=7, choices=REACTION_OPTIONS)
+    reaction_type = models.CharField(
+        'Тип реакції', max_length=7, choices=REACTION_OPTIONS
+    )
 
     def __str__(self) -> str:
         return f'{self.user} поставив {self.reaction_type} на {self.location}'
@@ -172,8 +185,8 @@ class Reaction(models.Model):
     class Meta:
         """Метаклас моделі, який визначає метадані моделі."""
 
-        verbose_name = 'Reaction'
-        verbose_name_plural = 'Reactions'
+        verbose_name = 'Реакція'
+        verbose_name_plural = 'Реакції'
         unique_together = ('user', 'location', 'reaction_type')
 
 
@@ -197,19 +210,19 @@ class Favourite(models.Model):
     class Meta:
         """Метаклас моделі, який визначає метадані моделі."""
 
-        verbose_name = 'Favourite'
-        verbose_name_plural = 'Favorites'
+        verbose_name = 'Улюблене'
+        verbose_name_plural = 'Улюблені'
         unique_together = ('user', 'location')
 
 
 class Advertisement(models.Model):
     """Реклама."""
 
-    title = models.CharField(max_length=255)
-    link = models.URLField(blank=True, null=True)
-    image_url = models.URLField(blank=True, null=True)
-    is_active = models.BooleanField(default=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    title = models.CharField('Заголовок реклами', max_length=255)
+    link = models.URLField('Посилання на вебсайт')
+    image_url = models.URLField('Зображення')
+    is_active = models.BooleanField('Активне', default=True)
+    created_at = models.DateTimeField('Дата створення', auto_now_add=True)
 
     def __str__(self) -> str:
         """
@@ -223,5 +236,5 @@ class Advertisement(models.Model):
     class Meta:
         """Метаклас моделі, який визначає метадані моделі."""
 
-        verbose_name = 'Advertisement'
-        verbose_name_plural = 'Advertisements'
+        verbose_name = 'Реклама'
+        verbose_name_plural = 'Реклама'
