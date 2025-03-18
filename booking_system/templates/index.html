@@ -52,13 +52,13 @@
                 <img src="{{ location.photo }}" class="card-img-top" alt="{{ location.name }}" style="height: 200px; object-fit: cover;">
                 <div class="card-body">
                     <h5 class="card-title">
-                        <a href="{% url 'booking:location_detail' location.id %}" class="text-decoration-none">{{ location.name }}</a>
+                        <a href="{% url 'booking:location_detail' location.pk %}" class="text-decoration-none">{{ location.name }}</a>
                     </h5>
                     <p class="card-text">{{ location.city }}, {{ location.country }}</p>
                     <p class="card-text">{{ location.price_per_night }} грн / ніч</p>
                     <span class="badge {% if location.is_booked %}bg-danger{% else %}bg-success{% endif %}">{{ location.is_booked|yesno:"Станом на зараз заброньовано,Станом на зараз доступно" }}</span>
                     <div class="mt-2">
-                        <a href="{% url 'booking:location_detail' location.id %}" class="btn btn-outline-primary">Переглянути</a>
+                        <a href="{% url 'booking:location_detail' location.pk %}" class="btn btn-outline-primary">Переглянути</a>
                         <a href="{% url 'booking:create_booking' location.pk %}" class="btn btn-primary">Забронювати</a>
                         {{ location.like_count }} <i class="fa-regular fa-thumbs-up"></i> {{ location.dislike_count }} <i class="fa-regular fa-thumbs-down"></i>
                         <i class="{% if location in favourites %}fa-solid{% else %}fa-regular{% endif %} fa-heart"></i>
@@ -78,13 +78,13 @@
                 <img src="{{ location.photo }}" class="card-img-top" alt="{{ location.name }}" style="height: 200px; object-fit: cover;">
                 <div class="card-body">
                     <h5 class="card-title">
-                        <a href="{% url 'booking:location_detail' location.id %}" class="text-decoration-none">{{ location.name }}</a>
+                        <a href="{% url 'booking:location_detail' location.pk %}" class="text-decoration-none">{{ location.name }}</a>
                     </h5>
                     <p class="card-text">{{ location.city }}, {{ location.country }}</p>
                     <p class="card-text">{{ location.price_per_night }} грн / ніч</p>
                     <span class="badge {% if location.is_booked %}bg-danger{% else %}bg-success{% endif %}">{{ location.is_booked|yesno:"Станом на зараз заброньовано,Станом на зараз доступно" }}</span>
                     <div class="mt-2">
-                        <a href="{% url 'booking:location_detail' location.id %}" class="btn btn-outline-primary">Переглянути</a>
+                        <a href="{% url 'booking:location_detail' location.pk %}" class="btn btn-outline-primary">Переглянути</a>
                         <a href="{% url 'booking:create_booking' location.pk %}" class="btn btn-primary">Забронювати</a>
                         <span>{{ location.like_count }} <i class="fa-regular fa-thumbs-up"></i></span>
                         <span>{{ location.dislike_count }} <i class="fa-regular fa-thumbs-down"></i></span>
