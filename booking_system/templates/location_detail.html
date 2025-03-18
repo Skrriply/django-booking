@@ -22,7 +22,7 @@
           <p>Рейтинг: Немає</p>
           {% endif %}
           <p>Ціна за ніч: {{ location.price_per_night }} грн</p>
-          <p>Доступно місць: {{ location.amount }}</p>
+          <p>Місткість: {{ location.amount }}</p>
 
           <div class="d-flex">
             <form method="POST" action="{% url 'booking:like_location' location.pk %}" class="me-2">

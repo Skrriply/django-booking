@@ -165,6 +165,7 @@ def send_activation_email(request: HttpRequest, booking: Booking) -> None:
     )
 
 
+@login_required
 def activate_booking(request: HttpRequest, code: int) -> HttpResponse:
     """
     Активує бронювання за кодом активації.
@@ -244,7 +245,6 @@ def delete_review(request: HttpRequest, review_id: int) -> HttpResponse:
     return HttpResponse(status=403)
 
 
-# TODO: Виправити IntegrityError
 @login_required
 def like_location(request: HttpRequest, location_id: int) -> HttpResponse:
     """
