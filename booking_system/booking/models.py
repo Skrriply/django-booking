@@ -15,10 +15,10 @@ class Location(models.Model):
     rating = models.PositiveSmallIntegerField(
         validators=[MinValueValidator(0), MaxValueValidator(5)], default=0
     )
-    like_count = models.PositiveIntegerField(default=0)
-    dislike_count = models.PositiveIntegerField(default=0)
+    like_count = models.PositiveIntegerField(default=0, editable=False)
+    dislike_count = models.PositiveIntegerField(default=0, editable=False)
     #favourite = models.CharField(max_length=100, default="fa-solid fa-heart-circle-plus")
-    is_favourited = models.BooleanField(default=False)
+    #is_favourited = models.BooleanField(default=False)
     amount = models.PositiveIntegerField()
     description = models.TextField()
     photo = models.URLField()

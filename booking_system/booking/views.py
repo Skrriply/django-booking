@@ -203,14 +203,11 @@ def favourite_location(request, location_id):
     location = get_object_or_404(Location, id=location_id)
     favourite, created = Favourite.objects.get_or_create(user=request.user, location=location)
 
-    if created:
-        location.is_favourited = False
-    else:
+    if not created:
         favourite.delete()
-        location.is_favourited = True
-
-    location.save()
+    
     return redirect("booking:location_detail", pk=location_id)
+
 
 
 
