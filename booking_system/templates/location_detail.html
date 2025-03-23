@@ -1,0 +1,96 @@
+{% extends 'base/_base.html' %}
+{% load crispy_forms_filters %}
+
+{% block title %}
+Докладніше про {{ location.name }}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <!-- Докладна інформація про локацію -->
+  <div class="row">
+    <div class="col-md-8">
+      <div class="card mb-3">
+        <img src="{{ location.photo }}" alt="{{ location.name }}" class="img-fluid card-img-top" style="max-height: 500px; object-fit: cover" />
+        <div class="card-body">
+          <h1 class="card-title">{{ location.name }}</h1>
+          <p class="lead">{{ location.description }}</p>
+          <p>Місцезнаходження: {{ location.city }}, {{ location.country }}</p>
+          {% if location.rating != 0 %}
+          <p>Рейтинг: {{ location.rating }}</p>
+          {% else %}
+          <p>Рейтинг: Немає</p>
+          {% endif %}
+          <p>Ціна за ніч: {{ location.price_per_night }} грн</p>
+          <p>Місткість: {{ location.amount }}</p>
+
+          <div class="d-flex">
+            <form method="POST" action="{% url 'booking:like_location' location.pk %}" class="me-2">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-outline-primary">👍 Лайк ({{ location.like_count }})</button>
+            </form>
+            <form method="POST" action="{% url 'booking:dislike_location' location.pk %}" class="me-2">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-outline-danger">👎 Дизлайк ({{ location.dislike_count }})</button>
+            </form>
+            <form method="POST" action="{% url 'booking:favourite_location' location.pk %}">
+              {% csrf_token %}
+              {% if location in favourites %}
+              <button type="submit" class="btn btn-outline-danger">❤️ Прибрати з улюблених</button>
+              {% else %}
+              <button type="submit" class="btn btn-outline-danger">🤍 Додати до улюблених</button>
+              {% endif %}
+          </form>
+          </div>
+
+          {% if request.user.is_authenticated and not user_review %}
+            </br>
+            <h3>Залишити відгук</h3>
+            <form method="POST">
+              {% csrf_token %}
+              {{ review_form|crispy }}
+              <button type="submit" class="btn btn-primary">Опублікувати</button>
+            </form>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Кнопка "Забронювати" -->
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Забронюйте вже зараз!</h5>
+          <a href="{% url 'booking:create_booking' location.pk %}" class="btn btn-success w-100">Забронювати</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Відгуки -->
+  <div class="mt-5">
+    <h3>Відгуки</h3>
+    {% for review in reviews %}
+      <div class="card mb-3">
+        <div class="card-body">
+          {% if review.user.first_name and review.user.last_name %}
+          <h5 class="card-title">{{ review.user.first_name }} {{ review.user.last_name }}</h5>
+          {% else %}
+          <h5 class="card-title">{{ review.user.username}}</h5>
+          {% endif %}
+          <p class="card-text">{{ review.comment }}</p>
+          <p class="card-text"><small class="text-muted">Рейтинг: {{ review.rating }}</small></p>
+          {% if review.user == request.user or request.user.is_staff %}
+            <a href="{% url 'booking:delete_review' review.pk %}" class="btn btn-danger btn-sm">Видалити</a>
+          {% endif %}
+        </div>
+      </div>
+    {% empty %}
+      <p>Немає відгуків.</p>
+    {% endfor %}
+  </div>
+
+  <!-- Кнопка "Назад до списку" -->
+  <a href="{% url 'booking:index' %}" class="btn btn-secondary mt-3">Назад до списку</a>
+</div>
+{% endblock %}

@@ -1,0 +1,71 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk" data-bs-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="{% static 'css/ad_banners.css' %}">
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+      crossorigin="anonymous"
+    ></script>
+    <title>{% block title %}{% endblock title %}</title>
+  </head>
+
+  <body class="d-flex flex-column min-vh-100">
+    {% include 'base/_header.html' %}
+    <div class="container mt-5">
+      {% include 'base/_messages.html' %}
+      {% block content %}{% endblock content %}
+    </div>
+    {% include 'base/_footer.html' %}
+
+    {% if left_advertisement %}
+    <div id="left-ad" class="ad-banner">
+      <div class="card">
+        {% if left_advertisement.image_url %}
+        <img src="{{ left_advertisement.image_url }}" class="card-img-top ad-banner-img" alt="{{ left_advertisement.title }}">
+        {% endif %}
+        <div class="card-body text-center">
+          <h6 class="card-title">{{ left_advertisement.title }}</h6>
+          <p class="small">{{ left_advertisement.description }}</p>
+          {% if left_advertisement.link %}
+          <a href="{{ left_advertisement.link }}" class="btn btn-sm btn-primary">Детальніше</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    {% if right_advertisement %}
+    <div id="right-ad" class="ad-banner">
+      <div class="card">
+        {% if right_advertisement.image_url %}
+        <img src="{{ right_advertisement.image_url }}" class="card-img-top ad-banner-img" alt="{{ right_advertisement.title }}">
+        {% endif %}
+        <div class="card-body text-center">
+          <h6 class="card-title">{{ right_advertisement.title }}</h6>
+          {% if right_advertisement.link %}
+          <a href="{{ right_advertisement.link }}" class="btn btn-sm btn-primary">Детальніше</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  </body>
+</html>

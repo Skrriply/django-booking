@@ -1,0 +1,21 @@
+{% extends 'base/_base.html' %}
+{% load crispy_forms_filters %}
+
+{% block title %}
+Авторизація
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-4">
+    <h1>Авторизація</h1>
+
+    <!-- Форма авторизації -->
+    <form method="POST">
+      {% csrf_token %}
+      {{ form|crispy }}
+      <button type="submit" class="btn btn-primary w-100">Увійти</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

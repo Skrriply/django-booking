@@ -1,0 +1,29 @@
+{% extends 'base/_base.html' %}
+{% load static %}
+
+{% block title %}
+Система бронювання
+{% endblock %}
+
+{% block content %}
+    <link rel="stylesheet" href="{% static 'css/loader.css' %}">
+
+    <!-- Підтвердження бронювання -->
+    <div class="text-center" id="booking-confirmation">
+        <h2 class="font-weight-bold">Ваше бронювання успішно підтверджено!</h2>
+        <h6 class="font-weight-bold">Мені трохи самотньо, можливо залишишся?</h6>
+        <img src="{% static 'images/cute.png' %}" alt="Логотип" class="img-fluid" style="width: 35px; height: 35px;">
+        <br><br>
+        <button class="btn btn-primary" id="send-button" onclick="showLoader()">Залишитися</button>
+    </div>
+
+    <!-- Анімація завантаження -->
+    <div class="text-center" style="display: none;" id="loading">
+        <h1>Будь ласка, зачекайте,<br>йде відправка даних до СБУ</h1>
+        <div class="loader"><br></div>
+        <div class="message" style="display: none;">Успішно відправлено!</div>
+    </div>
+
+    <!-- Скрипт для анімації завантаження -->
+    <script src="{% static 'js/loader.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,131 @@
+{% extends 'base/_base.html' %}
+{% load static %}
+
+{% block title %}
+Система бронювання
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+
+    <h1 class="my-4">Знайдіть та забронюйте потрібну вам локацію</h1>
+
+    <!-- Пошук -->
+    <form method="get" class="mb-3">
+        <div class="input-group">
+            <input class="form-control" type="search" placeholder="Пошук" aria-label="Пошук" name="q" value="{{ query }}">
+            <button class="btn btn-outline-success" type="submit">Пошук</button>
+        </div>
+    </form>
+
+    <!-- Сортування -->
+    <form method="get" class="mb-3">
+        <div class="input-group">
+            <label class="input-group-text" for="sort_by">Сортувати за:</label>
+            <select class="form-select" id="sort_by" name="sort_by" onchange="this.form.submit()">
+                <option value="name" {% if sort_by == 'name' %}selected{% endif %}>Назвою</option>
+                <option value="price" {% if sort_by == 'price' %}selected{% endif %}>Ціною</option>
+                <option value="rating" {% if sort_by == 'rating' %}selected{% endif %}>Рейтингом</option>
+            </select>
+            {% if query %}
+            <input type="hidden" name="q" value="{{ query }}">
+            {% endif %}
+        </div>
+    </form>
+
+    <!-- Фільтрування за часом -->
+    <form method="get" class="mb-3">
+        <div class="input-group">
+            <input type="date" class="form-control" name="start_date" value="{{ request.GET.start_date }}">
+            <input type="date" class="form-control" name="end_date" value="{{ request.GET.end_date }}">
+            <button class="btn btn-outline-success" type="submit">Пошук</button>
+        </div>
+    </form>
+
+    <!-- Улюблені локації -->
+    {% for location in favourites %}
+    <h2 class="my-4">Збережені локації</h2>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        <div class="col">
+            <div class="card h-100">
+                <img src="{{ location.photo }}" class="card-img-top" alt="{{ location.name }}" style="height: 200px; object-fit: cover;">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <a href="{% url 'booking:location_detail' location.pk %}" class="text-decoration-none">{{ location.name }}</a>
+                    </h5>
+                    <p class="card-text">{{ location.city }}, {{ location.country }}</p>
+                    <p class="card-text">{{ location.price_per_night }} грн / ніч</p>
+                    <span class="badge {% if location.is_booked %}bg-danger{% else %}bg-success{% endif %}">{{ location.is_booked|yesno:"Станом на зараз заброньовано,Станом на зараз доступно" }}</span>
+                    <div class="mt-2">
+                        <a href="{% url 'booking:location_detail' location.pk %}" class="btn btn-outline-primary">Переглянути</a>
+                        <a href="{% url 'booking:create_booking' location.pk %}" class="btn btn-primary">Забронювати</a>
+                        {{ location.like_count }} <i class="fa-regular fa-thumbs-up"></i> {{ location.dislike_count }} <i class="fa-regular fa-thumbs-down"></i>
+                        <i class="{% if location in favourites %}fa-solid{% else %}fa-regular{% endif %} fa-heart"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Локації -->
+    <h2 class="my-4">Усі локації</h2>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for location in locations %}
+        <div class="col">
+            <div class="card h-100">
+                <img src="{{ location.photo }}" class="card-img-top" alt="{{ location.name }}" style="height: 200px; object-fit: cover;">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <a href="{% url 'booking:location_detail' location.pk %}" class="text-decoration-none">{{ location.name }}</a>
+                    </h5>
+                    <p class="card-text">{{ location.city }}, {{ location.country }}</p>
+                    <p class="card-text">{{ location.price_per_night }} грн / ніч</p>
+                    <span class="badge {% if location.is_booked %}bg-danger{% else %}bg-success{% endif %}">{{ location.is_booked|yesno:"Станом на зараз заброньовано,Станом на зараз доступно" }}</span>
+                    <div class="mt-2">
+                        <a href="{% url 'booking:location_detail' location.pk %}" class="btn btn-outline-primary">Переглянути</a>
+                        <a href="{% url 'booking:create_booking' location.pk %}" class="btn btn-primary">Забронювати</a>
+                        <span>{{ location.like_count }} <i class="fa-regular fa-thumbs-up"></i></span>
+                        <span>{{ location.dislike_count }} <i class="fa-regular fa-thumbs-down"></i></span>
+                        {% if location in favourites %}
+                        <i class="fa-solid fa-heart"></i>
+                        {% else %}
+                        <i class="fa-regular fa-heart"></i>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p>Нічого не знайдено.</p>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Кнопка "Контакти" -->
+<button type="button" class="btn btn-primary rounded-circle p-3 position-fixed" id="hoverButton" style="width: 60px; height: 60px; bottom: 20px; right: 20px;">
+    <i class="fa-solid fa-phone-volume"></i>
+</button>
+
+<!-- Модальне вікно -->
+<div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Наші контакти</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрити"></button>
+            </div>
+            <div class="modal-body">
+                <p>📧 Написати email <code>nemo.bma@gmail.com</code></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрити</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Скрипт для відкриття модального вікна при наведенні -->
+<script src="{% static 'js/open_modal.js' %}"></script>
+{% endblock %}

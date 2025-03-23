@@ -1,0 +1,5 @@
+lint.ignore = ["F401"]
+extend-exclude = ["settings.py", "manage.py", "migrations"]
+
+[format]
+quote-style = "single"
